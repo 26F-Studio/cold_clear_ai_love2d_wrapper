@@ -55,17 +55,21 @@ static int request_next_move(lua_State *L){
 static int poll_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
     CCMove move;
-    move.hold=0;
     bool ret=cc_poll_next_move(bot,&move);
     lua_pushboolean(L,ret);//成功否
-    lua_pushinteger(L,move.hold);//hold否
-    lua_newtable(L);
-    int i,table=lua_gettop(L);
-    int len=move.movement_count;
-    for(i=0;i<len;i++){
-        lua_pushnumber(L,i);
-        lua_pushnumber(L,move.movements[i]);
-        lua_settable(L,-3);
+    if(ret){
+        lua_pushboolean(L,move.hold);//hold否
+        lua_newtable(L);
+        int i,table=lua_gettop(L);
+        int len=move.movement_count;
+        for(i=0;i<len;i++){
+            lua_pushnumber(L,i);
+            lua_pushnumber(L,move.movements[i]);
+            lua_settable(L,table);
+        }
+    }else{
+        lua_pushnil(L);
+        lua_pushnil(L);
     }
     return 3;
 }
@@ -123,7 +127,7 @@ static const struct luaL_Reg funcList[]=
     {0, 0}
 };
 
-int luaopen_cold_clear_wrapper(lua_State *L)
+int luaopen_CCloader(lua_State *L)
 {
     luaL_register(L, "cc", funcList);
     return 1;
