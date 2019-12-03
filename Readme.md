@@ -17,3 +17,18 @@ cc.request_next_move(bot)
 success, hold, move = cc.poll_next_move(bot)
 dead = cc.is_dead_async(bot)
 ```
+
+Some information from coldclear.h
+
+```c
+typedef enum CCPiece {
+    CC_I, CC_T, CC_O, CC_S, CC_Z, CC_L, CC_J
+} CCPiece;
+
+typedef enum CCMovement {
+    CC_LEFT, CC_RIGHT,
+    CC_CW, CC_CCW,
+    /* Soft drop all the way down */
+    CC_DROP
+} CCMovement;
+```
