@@ -107,6 +107,7 @@ static int get_default_config(lua_State *L){
     return 2;
 }
 
+//供lua调用的hold 20g bag7设置
 static int set_options(lua_State *L){
     CCOptions *options=(CCOptions*)lua_tointeger(L,1);
     bool hold=lua_toboolean(L,2);
@@ -115,6 +116,13 @@ static int set_options(lua_State *L){
     options->use_hold=hold;
     options->mode=_20g;
     options->speculate=bag7;
+    return 0;
+}
+
+//供lua创建新的默认选项数据
+static int cfree(lua_State *L){
+    void *p=(void*)lua_tointeger(L,1);
+    free(p);
     return 0;
 }
 
@@ -136,6 +144,7 @@ static const struct luaL_Reg funcList[]=
     {"default_weights",default_weights},
     {"get_default_config",get_default_config},
     {"set_options",set_options},
+    {"free",cfree},
     {0, 0}
 };
 
