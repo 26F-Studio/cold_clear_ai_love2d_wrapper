@@ -36,6 +36,46 @@ static int reset_async(lua_State *L){
     return 0;
 }
 
+//void cc_add_next_piece_async(CCAsyncBot *bot, CCPiece piece);
+static int add_next_piece_async(lua_State *L){
+    CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
+    int piece=lua_tointeger(L,2);
+    cc_add_next_piece_async(bot,piece);
+    return 0;
+}
+
+//void cc_request_next_move(CCAsyncBot *bot);
+static int request_next_move(lua_State *L){
+    CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
+    cc_request_next_move(bot);
+    return 0;
+}
+
+//bool cc_poll_next_move(CCAsyncBot *bot, CCMove *move);
+static int poll_next_move(lua_State *L){
+    CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
+    CCMove move;
+    bool ret=cc_poll_next_move(bot,&move);
+    //TODO: 返回是否成功和按键
+    lua_pushboolean(L,ret);
+    return 2;
+}
+
+//bool cc_is_dead_async(CCAsyncBot *bot);
+static int is_dead_async(lua_State *L){
+    CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
+    bool ret=cc_is_dead_async(bot);
+    lua_pushboolean(L,ret);
+    return 1;
+}
+
+//void cc_default_options(CCOptions *options);
+static int default_options(lua_State *L){
+    CCOptions *options=(CCOptions*)lua_tointeger(L,1);
+    cc_default_options(options);
+    return 0;
+}
+
 static int about(lua_State *L){
     lua_pushstring(L,"wrapper by flaribbit");
     return 1;
@@ -47,6 +87,10 @@ static const struct luaL_Reg funcList[]=
     {"launch_async",launch_async},
     {"destroy_async",destroy_async},
     {"reset_async",reset_async},
+    {"add_next_piece_async",add_next_piece_async},
+    {"request_next_move",request_next_move},
+    {"poll_next_move",poll_next_move},
+    {"default_options",default_options},
     {0, 0}
 };
 
