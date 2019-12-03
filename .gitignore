@@ -1,2 +1,3 @@
 *.dll
 test.cmd
+test.c

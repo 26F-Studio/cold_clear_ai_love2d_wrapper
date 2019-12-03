@@ -28,7 +28,7 @@ static int reset_async(lua_State *L){
     int combo=lua_tointeger(L,4);
     bool field[400];
     int i=0;
-    while(lua_next(L,2)){
+    while(lua_next(L,2)&&i<400){
         field[i++]=lua_toboolean(L,-1);
         lua_pop(L,1);
     }
@@ -55,6 +55,7 @@ static int request_next_move(lua_State *L){
 static int poll_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
     CCMove move;
+    move.hold=0;
     bool ret=cc_poll_next_move(bot,&move);
     lua_pushboolean(L,ret);//成功否
     lua_pushinteger(L,move.hold);//hold否
@@ -99,7 +100,7 @@ static int get_default_config(lua_State *L){
     cc_default_weights(weights);
     lua_pushinteger(L,(lua_Integer)options);
     lua_pushinteger(L,(lua_Integer)weights);
-    return 0;
+    return 2;
 }
 
 static int about(lua_State *L){
