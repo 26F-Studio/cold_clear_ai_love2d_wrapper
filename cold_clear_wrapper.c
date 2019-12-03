@@ -56,9 +56,17 @@ static int poll_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
     CCMove move;
     bool ret=cc_poll_next_move(bot,&move);
-    //TODO: 返回是否成功和按键
-    lua_pushboolean(L,ret);
-    return 2;
+    lua_pushboolean(L,ret);//成功否
+    lua_pushinteger(L,move.hold);//hold否
+    lua_newtable(L);
+    int i,table=lua_gettop(L);
+    int len=move.movement_count;
+    for(i=0;i<len;i++){
+        lua_pushnumber(L,i);
+        lua_pushnumber(L,move.movements[i]);
+        lua_settable(L,-3);
+    }
+    return 3;
 }
 
 //bool cc_is_dead_async(CCAsyncBot *bot);
@@ -73,6 +81,24 @@ static int is_dead_async(lua_State *L){
 static int default_options(lua_State *L){
     CCOptions *options=(CCOptions*)lua_tointeger(L,1);
     cc_default_options(options);
+    return 0;
+}
+
+//void cc_default_weights(CCWeights *weights);
+static int default_weights(lua_State *L){
+    CCWeights *weights=(CCWeights*)lua_tointeger(L,1);
+    cc_default_weights(weights);
+    return 0;
+}
+
+//供lua创建新的默认选项数据
+static int get_default_config(lua_State *L){
+    CCOptions *options=(CCOptions*)malloc(sizeof(CCOptions));
+    CCWeights *weights=(CCWeights*)malloc(sizeof(CCWeights));
+    cc_default_options(options);
+    cc_default_weights(weights);
+    lua_pushinteger(L,(lua_Integer)options);
+    lua_pushinteger(L,(lua_Integer)weights);
     return 0;
 }
 
@@ -91,6 +117,8 @@ static const struct luaL_Reg funcList[]=
     {"request_next_move",request_next_move},
     {"poll_next_move",poll_next_move},
     {"default_options",default_options},
+    {"default_weights",default_weights},
+    {"get_default_config",get_default_config},
     {0, 0}
 };
 
