@@ -63,7 +63,7 @@ static int poll_next_move(lua_State *L){
         int i,table=lua_gettop(L);
         int len=move.movement_count;
         for(i=0;i<len;i++){
-            lua_pushnumber(L,i);
+            lua_pushnumber(L,i+1);
             lua_pushnumber(L,move.movements[i]);
             lua_settable(L,table);
         }
@@ -107,6 +107,17 @@ static int get_default_config(lua_State *L){
     return 2;
 }
 
+static int set_options(lua_State *L){
+    CCOptions *options=(CCOptions*)lua_tointeger(L,1);
+    bool hold=lua_toboolean(L,2);
+    bool _20g=lua_toboolean(L,3);
+    bool bag7=lua_toboolean(L,4);
+    options->use_hold=hold;
+    options->mode=_20g;
+    options->speculate=bag7;
+    return 0;
+}
+
 static int about(lua_State *L){
     lua_pushstring(L,"wrapper by flaribbit");
     return 1;
@@ -124,6 +135,7 @@ static const struct luaL_Reg funcList[]=
     {"default_options",default_options},
     {"default_weights",default_weights},
     {"get_default_config",get_default_config},
+    {"set_options",set_options},
     {0, 0}
 };
 
