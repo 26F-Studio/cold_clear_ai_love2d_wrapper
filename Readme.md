@@ -7,7 +7,7 @@ options, weights=cc.get_default_config()
 -- you can change some options (bool)
 cc.set_options(options, _hold, _20g, _bag7)
 -- create new bot
-bot = cc.launch_async(bot, options, weights)
+bot = cc.launch_async(options, weights)
 -- refresh current status and field
 -- field is a table contains 400 bools
 cc.reset_async(bot, field, b2b, combo)
