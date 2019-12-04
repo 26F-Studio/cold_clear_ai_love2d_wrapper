@@ -119,6 +119,34 @@ static int set_options(lua_State *L){
     return 0;
 }
 
+static int set_hold(lua_State *L){
+    CCOptions *options=(CCOptions*)lua_tointeger(L,1);
+    bool hold=lua_toboolean(L,2);
+    options->use_hold=hold;
+    return 0;
+}
+
+static int set_20g(lua_State *L){
+    CCOptions *options=(CCOptions*)lua_tointeger(L,1);
+    bool _20g=lua_toboolean(L,2);
+    options->mode=_20g;
+    return 0;
+}
+
+static int set_bag7(lua_State *L){
+    CCOptions *options=(CCOptions*)lua_tointeger(L,1);
+    bool bag7=lua_toboolean(L,2);
+    options->speculate=bag7;
+    return 0;
+}
+
+static int set_max_nodes(lua_State *L){
+    CCOptions *options=(CCOptions*)lua_tointeger(L,1);
+    int max_nodes=lua_tointeger(L,2);
+    options->max_nodes=max_nodes;
+    return 0;
+}
+
 //供lua创建新的默认选项数据
 static int cfree(lua_State *L){
     void *p=(void*)lua_tointeger(L,1);
@@ -144,6 +172,10 @@ static const struct luaL_Reg funcList[]=
     {"default_weights",default_weights},
     {"get_default_config",get_default_config},
     {"set_options",set_options},
+    {"set_hold",set_hold},
+    {"set_20g",set_20g},
+    {"set_bag7",set_bag7},
+    {"set_max_nodes",set_max_nodes},
     {"free",cfree},
     {0, 0}
 };
