@@ -168,6 +168,7 @@ static const struct luaL_Reg funcList[]=
     {"add_next_piece_async",add_next_piece_async},
     {"request_next_move",request_next_move},
     {"poll_next_move",poll_next_move},
+    {"is_dead_async",is_dead_async},
     {"default_options",default_options},
     {"default_weights",default_weights},
     {"get_default_config",get_default_config},
