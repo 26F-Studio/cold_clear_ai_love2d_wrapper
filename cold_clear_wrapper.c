@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include "coldclear.h"
 #include "lua.h"
@@ -154,6 +155,46 @@ static int cfree(lua_State *L){
     return 0;
 }
 
+static int set_weights(lua_State *L){
+    CCWeights *weights=(CCWeights*)lua_tointeger(L,1);
+    while(lua_next(L,2)){
+        const char *key=lua_tostring(L,-2);
+        int value=lua_tonumber(L,-1);
+        if(!strcmp(key,"back_to_back"))          weights->back_to_back=value;
+        else if(!strcmp(key,"bumpiness"))        weights->bumpiness=value;
+        else if(!strcmp(key,"bumpiness_sq"))     weights->bumpiness_sq=value;
+        else if(!strcmp(key,"height"))           weights->height=value;
+        else if(!strcmp(key,"top_half"))         weights->top_half=value;
+        else if(!strcmp(key,"top_quarter"))      weights->top_quarter=value;
+        else if(!strcmp(key,"cavity_cells"))     weights->cavity_cells=value;
+        else if(!strcmp(key,"cavity_cells_sq"))  weights->cavity_cells_sq=value;
+        else if(!strcmp(key,"overhang_cells"))   weights->overhang_cells=value;
+        else if(!strcmp(key,"overhang_cells_sq"))weights->overhang_cells_sq=value;
+        else if(!strcmp(key,"covered_cells"))    weights->covered_cells=value;
+        else if(!strcmp(key,"covered_cells_sq")) weights->covered_cells_sq=value;
+        //else if(!strcmp(key,"tslot"))            weights->tslot=value;
+        else if(!strcmp(key,"well_depth"))       weights->well_depth=value;
+        else if(!strcmp(key,"max_well_depth"))   weights->max_well_depth=value;
+        //else if(!strcmp(key,"well_column"))      weights->well_column=value;
+        else if(!strcmp(key,"b2b_clear"))        weights->b2b_clear=value;
+        else if(!strcmp(key,"clear1"))           weights->clear1=value;
+        else if(!strcmp(key,"clear2"))           weights->clear2=value;
+        else if(!strcmp(key,"clear3"))           weights->clear3=value;
+        else if(!strcmp(key,"clear4"))           weights->clear4=value;
+        else if(!strcmp(key,"tspin1"))           weights->tspin1=value;
+        else if(!strcmp(key,"tspin2"))           weights->tspin2=value;
+        else if(!strcmp(key,"tspin3"))           weights->tspin3=value;
+        else if(!strcmp(key,"mini_tspin1"))      weights->mini_tspin1=value;
+        else if(!strcmp(key,"mini_tspin2"))      weights->mini_tspin2=value;
+        else if(!strcmp(key,"perfect_clear"))    weights->perfect_clear=value;
+        else if(!strcmp(key,"combo_garbage"))    weights->combo_garbage=value;
+        else if(!strcmp(key,"move_time"))        weights->move_time=value;
+        else if(!strcmp(key,"wasted_t"))         weights->wasted_t=value;
+        lua_pop(L,1);
+    }
+    return 0;
+}
+
 static int about(lua_State *L){
     lua_pushstring(L,"wrapper by flaribbit");
     return 1;
@@ -177,6 +218,7 @@ static const struct luaL_Reg funcList[]=
     {"set_20g",set_20g},
     {"set_bag7",set_bag7},
     {"set_max_nodes",set_max_nodes},
+    {"set_weights",set_weights},
     {"free",cfree},
     {0, 0}
 };
