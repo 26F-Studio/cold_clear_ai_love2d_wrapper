@@ -14,6 +14,8 @@ cc.reset_async(bot, field, b2b, combo)
 -- add next piece
 cc.add_next_piece_async(bot, piece)
 -- calculate next move
+cc.request_next_move(bot, jeopardy)
+-- or without jeopardy
 cc.request_next_move(bot)
 -- get next move
 status, hold, move = cc.poll_next_move(bot)

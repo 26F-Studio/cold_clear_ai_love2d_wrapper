@@ -45,7 +45,7 @@ static int add_next_piece_async(lua_State *L){
     return 0;
 }
 
-//void cc_request_next_move(CCAsyncBot *bot);
+//void cc_request_next_move(CCAsyncBot *bot, uint32_t incoming);
 static int request_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
     if(lua_isnumber(L,2)){
