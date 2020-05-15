@@ -16,8 +16,9 @@ cc.add_next_piece_async(bot, piece)
 -- calculate next move
 cc.request_next_move(bot)
 -- get next move
-success, hold, move = cc.poll_next_move(bot)
-dead = cc.is_dead_async(bot)
+status, hold, move = cc.poll_next_move(bot)
+-- or blocking version
+status, hold, move = cc.block_next_move(bot)
 -- destroy
 cc.destroy_async(bot)
 ```
@@ -25,6 +26,12 @@ cc.destroy_async(bot)
 Some information from coldclear.h
 
 ```c
+typedef enum CCBotPollStatus {
+    CC_MOVE_PROVIDED,
+    CC_WAITING,
+    CC_BOT_DEAD
+} CCBotPollStatus;
+
 typedef enum CCPiece {
     CC_I, CC_T, CC_O, CC_S, CC_Z, CC_L, CC_J
 } CCPiece;

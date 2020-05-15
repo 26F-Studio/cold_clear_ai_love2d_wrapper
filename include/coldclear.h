@@ -21,6 +21,12 @@ typedef enum CCMovementMode {
     CC_HARD_DROP_ONLY
 } CCMovementMode;
 
+typedef enum CCBotPollStatus {
+    CC_MOVE_PROVIDED,
+    CC_WAITING,
+    CC_BOT_DEAD
+} CCBotPollStatus;
+
 typedef struct CCMove {
     /* Whether hold is required */
     bool hold;
@@ -42,8 +48,10 @@ typedef struct CCOptions {
     CCMovementMode mode;
     bool use_hold;
     bool speculate;
-    size_t min_nodes;
-    size_t max_nodes;
+    bool pcloop;
+    uint32_t min_nodes;
+    uint32_t max_nodes;
+    uint32_t threads;
 } CCOptions;
 
 typedef struct CCWeights {
@@ -53,6 +61,7 @@ typedef struct CCWeights {
     int32_t height;
     int32_t top_half;
     int32_t top_quarter;
+    int32_t jeopardy;
     int32_t cavity_cells;
     int32_t cavity_cells_sq;
     int32_t overhang_cells;
@@ -78,6 +87,8 @@ typedef struct CCWeights {
     int32_t combo_garbage;
     int32_t move_time;
     int32_t wasted_t;
+
+    bool use_bag;
 } CCWeights;
 
 /* Launches a bot thread with a blank board, empty queue, and all seven pieces in the bag, using the
@@ -133,8 +144,11 @@ void cc_add_next_piece_async(CCAsyncBot *bot, CCPiece piece);
  * 
  * Once a move is chosen, the bot will update its internal state to the result of the piece
  * being placed correctly and the move will become available by calling `cc_poll_next_move`.
+ * 
+ * The incoming parameter specifies the number of lines of garbage the bot is expected to receive
+ * after placing the next piece.
  */
-void cc_request_next_move(CCAsyncBot *bot);
+void cc_request_next_move(CCAsyncBot *bot, uint32_t incoming);
 
 /* Checks to see if the bot has provided the previously requested move yet.
  * 
@@ -145,18 +159,25 @@ void cc_request_next_move(CCAsyncBot *bot);
  * If the piece couldn't be placed in the expected location, you must call `cc_reset_async` to
  * reset the game field, back-to-back status, and combo values.
  * 
- * If the move has been provided, this function will return true and the move will be returned in
- * the move parameter. Otherwise, this function returns false.
+ * If the move has been provided, this function will return `CC_MOVE_PROVIDED`.
+ * If the bot has not produced a result, this function will return `CC_WAITING`.
+ * If the bot has found that it cannot survive, this function will return `CC_BOT_DEAD`
  */
-bool cc_poll_next_move(CCAsyncBot *bot, CCMove *move);
+CCBotPollStatus cc_poll_next_move(CCAsyncBot *bot, CCMove *move);
 
-/* Returns true if all possible piece placement sequences result in death, or the bot thread
- * crashed.
+/* This function is the same as `cc_poll_next_move` except when `cc_poll_next_move` would return
+ * `CC_WAITING` it instead waits until the bot has made a decision.
+ *
+ * If the move has been provided, this function will return `CC_MOVE_PROVIDED`.
+ * If the bot has found that it cannot survive, this function will return `CC_BOT_DEAD`
  */
-bool cc_is_dead_async(CCAsyncBot *bot);
+CCBotPollStatus cc_block_next_move(CCAsyncBot *bot, CCMove *move);
 
 /* Returns the default options in the options parameter */
 void cc_default_options(CCOptions *options);
 
 /* Returns the default weights in the weights parameter */
 void cc_default_weights(CCWeights *weights);
+
+/* Resturns the fast game config weights in the weights parameter */
+void cc_fast_weights(CCWeights *weights);

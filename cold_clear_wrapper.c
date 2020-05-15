@@ -48,17 +48,21 @@ static int add_next_piece_async(lua_State *L){
 //void cc_request_next_move(CCAsyncBot *bot);
 static int request_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
-    cc_request_next_move(bot);
+    if(lua_isnumber(L,2)){
+        cc_request_next_move(bot,lua_tointeger(L,2));
+    }else{
+        cc_request_next_move(bot,0);
+    }
     return 0;
 }
 
-//bool cc_poll_next_move(CCAsyncBot *bot, CCMove *move);
+//CCBotPollStatus cc_poll_next_move(CCAsyncBot *bot, CCMove *move);
 static int poll_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
     CCMove move;
-    bool ret=cc_poll_next_move(bot,&move);
+    CCBotPollStatus ret=cc_poll_next_move(bot,&move);
     lua_pushboolean(L,ret);//成功否
-    if(ret){
+    if(!ret){
         lua_pushboolean(L,move.hold);//hold否
         lua_newtable(L);
         int i,table=lua_gettop(L);
@@ -75,12 +79,27 @@ static int poll_next_move(lua_State *L){
     return 3;
 }
 
-//bool cc_is_dead_async(CCAsyncBot *bot);
-static int is_dead_async(lua_State *L){
+//CCBotPollStatus cc_block_next_move(CCAsyncBot *bot, CCMove *move);
+static int block_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
-    bool ret=cc_is_dead_async(bot);
-    lua_pushboolean(L,ret);
-    return 1;
+    CCMove move;
+    CCBotPollStatus ret=cc_block_next_move(bot,&move);
+    lua_pushboolean(L,ret);//成功否
+    if(!ret){
+        lua_pushboolean(L,move.hold);//hold否
+        lua_newtable(L);
+        int i,table=lua_gettop(L);
+        int len=move.movement_count;
+        for(i=0;i<len;i++){
+            lua_pushnumber(L,i+1);
+            lua_pushnumber(L,move.movements[i]);
+            lua_settable(L,table);
+        }
+    }else{
+        lua_pushnil(L);
+        lua_pushnil(L);
+    }
+    return 3;
 }
 
 //void cc_default_options(CCOptions *options);
@@ -209,7 +228,7 @@ static const struct luaL_Reg funcList[]=
     {"add_next_piece_async",add_next_piece_async},
     {"request_next_move",request_next_move},
     {"poll_next_move",poll_next_move},
-    {"is_dead_async",is_dead_async},
+    {"block_next_move",block_next_move},
     {"default_options",default_options},
     {"default_weights",default_weights},
     {"get_default_config",get_default_config},
