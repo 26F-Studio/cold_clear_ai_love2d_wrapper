@@ -127,15 +127,17 @@ static int get_default_config(lua_State *L){
     return 2;
 }
 
-//供lua调用的hold 20g bag7设置
+//供lua调用的hold 20g bag7 pcf设置
 static int set_options(lua_State *L){
     CCOptions *options=(CCOptions*)lua_tointeger(L,1);
     bool hold=lua_toboolean(L,2);
     bool _20g=lua_toboolean(L,3);
     bool bag7=lua_toboolean(L,4);
+    bool pcloop=lua_toboolean(L,5);
     options->use_hold=hold;
     options->mode=_20g;
     options->speculate=bag7;
+    options->pcloop=pcloop;
     return 0;
 }
 
@@ -160,10 +162,31 @@ static int set_bag7(lua_State *L){
     return 0;
 }
 
+static int set_pcloop(lua_State *L){
+    CCOptions *options=(CCOptions*)lua_tointeger(L,1);
+    bool pcloop=lua_toboolean(L,2);
+    options->pcloop=pcloop;
+    return 0;
+}
+
+static int set_min_nodes(lua_State *L){
+    CCOptions *options=(CCOptions*)lua_tointeger(L,1);
+    int min_nodes=lua_tointeger(L,2);
+    options->min_nodes=min_nodes;
+    return 0;
+}
+
 static int set_max_nodes(lua_State *L){
     CCOptions *options=(CCOptions*)lua_tointeger(L,1);
     int max_nodes=lua_tointeger(L,2);
     options->max_nodes=max_nodes;
+    return 0;
+}
+
+static int set_threads(lua_State *L){
+    CCOptions *options=(CCOptions*)lua_tointeger(L,1);
+    int threads=lua_tointeger(L,2);
+    options->threads=threads;
     return 0;
 }
 
