@@ -56,11 +56,16 @@ static int request_next_move(lua_State *L){
     return 0;
 }
 
-//CCBotPollStatus cc_poll_next_move(CCAsyncBot *bot, CCMove *move);
+//CCBotPollStatus cc_poll_next_move(
+//    CCAsyncBot *bot,
+//    CCMove *move,
+//    CCPlanPlacement* plan,
+//    uint32_t *plan_length
+//);
 static int poll_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
     CCMove move;
-    CCBotPollStatus ret=cc_poll_next_move(bot,&move);
+    CCBotPollStatus ret=cc_poll_next_move(bot,&move, NULL, NULL);
     lua_pushboolean(L,ret);//成功否
     if(!ret){
         lua_pushboolean(L,move.hold);//hold否
@@ -79,11 +84,16 @@ static int poll_next_move(lua_State *L){
     return 3;
 }
 
-//CCBotPollStatus cc_block_next_move(CCAsyncBot *bot, CCMove *move);
+//CCBotPollStatus cc_block_next_move(
+//    CCAsyncBot *bot,
+//    CCMove *move,
+//    CCPlanPlacement* plan,
+//    uint32_t *plan_length
+//);
 static int block_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
     CCMove move;
-    CCBotPollStatus ret=cc_block_next_move(bot,&move);
+    CCBotPollStatus ret=cc_block_next_move(bot,&move, NULL, NULL);
     lua_pushboolean(L,ret);//成功否
     if(!ret){
         lua_pushboolean(L,move.hold);//hold否
