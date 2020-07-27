@@ -12,7 +12,7 @@ x86/CCloader.dll: cold_clear_wrapper.c
 
 # linux build
 CCloader.so: cold_clear_wrapper.c
-	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c libcold_clear.so liblove.so -o CCloader.so
+	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c libcold_clear.so libluajit-5.1.so -o CCloader.so
 
 # android build, !! valid but not recommended, please follow Readme.md !!
 android/CCloader.so:
