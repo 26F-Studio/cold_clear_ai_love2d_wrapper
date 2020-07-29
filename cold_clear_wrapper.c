@@ -56,6 +56,40 @@ static int request_next_move(lua_State *L){
     return 0;
 }
 
+int return_cc_move(lua_State *L, CCBotPollStatus ret, CCMove *move, CCPlanPlacement *plan, uint32_t *plan_length) {
+    lua_pushnumber(L,ret);//成功否
+    if(CC_MOVE_PROVIDED == ret){
+        lua_newtable(L);
+        int k, table1 = lua_gettop(L);
+        for (k = 0; k < 4; ++k) {
+            lua_pushnumber(L, k+1);
+            lua_newtable(L);
+            int j, table2 = lua_gettop(L);
+            lua_pushnumber(L, 1);
+            lua_pushnumber(L, move->expected_x[k]);
+            lua_settable(L, table2);
+            lua_pushnumber(L, 2);
+            lua_pushnumber(L, move->expected_y[k]);
+            lua_settable(L, table2);
+            lua_settable(L, table1);
+        }
+        lua_pushboolean(L,move->hold);//hold否
+        lua_newtable(L);
+        int i,table=lua_gettop(L);
+        int len=move->movement_count;
+        for(i=0;i<len;i++){
+            lua_pushnumber(L,i+1);
+            lua_pushnumber(L,move->movements[i]);
+            lua_settable(L,table);
+        }
+    }else{
+        lua_pushnil(L);
+        lua_pushnil(L);
+        lua_pushnil(L);
+    }
+    return 4;
+}
+
 //CCBotPollStatus cc_poll_next_move(
 //    CCAsyncBot *bot,
 //    CCMove *move,
@@ -65,23 +99,8 @@ static int request_next_move(lua_State *L){
 static int poll_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
     CCMove move;
-    CCBotPollStatus ret=cc_poll_next_move(bot,&move, NULL, NULL);
-    lua_pushboolean(L,ret);//成功否
-    if(!ret){
-        lua_pushboolean(L,move.hold);//hold否
-        lua_newtable(L);
-        int i,table=lua_gettop(L);
-        int len=move.movement_count;
-        for(i=0;i<len;i++){
-            lua_pushnumber(L,i+1);
-            lua_pushnumber(L,move.movements[i]);
-            lua_settable(L,table);
-        }
-    }else{
-        lua_pushnil(L);
-        lua_pushnil(L);
-    }
-    return 3;
+    CCBotPollStatus ret = cc_poll_next_move(bot, &move, NULL, NULL);
+    return return_cc_move(L, ret, &move, NULL, NULL);
 }
 
 //CCBotPollStatus cc_block_next_move(
@@ -93,23 +112,8 @@ static int poll_next_move(lua_State *L){
 static int block_next_move(lua_State *L){
     CCAsyncBot *bot=(CCAsyncBot*)lua_tointeger(L,1);
     CCMove move;
-    CCBotPollStatus ret=cc_block_next_move(bot,&move, NULL, NULL);
-    lua_pushboolean(L,ret);//成功否
-    if(!ret){
-        lua_pushboolean(L,move.hold);//hold否
-        lua_newtable(L);
-        int i,table=lua_gettop(L);
-        int len=move.movement_count;
-        for(i=0;i<len;i++){
-            lua_pushnumber(L,i+1);
-            lua_pushnumber(L,move.movements[i]);
-            lua_settable(L,table);
-        }
-    }else{
-        lua_pushnil(L);
-        lua_pushnil(L);
-    }
-    return 3;
+    CCBotPollStatus ret = cc_block_next_move(bot, &move, NULL, NULL);
+    return return_cc_move(L, ret, &move, NULL, NULL);
 }
 
 //void cc_default_options(CCOptions *options);
@@ -269,6 +273,7 @@ static const struct luaL_Reg funcList[]=
     {"set_hold",set_hold},
     {"set_20g",set_20g},
     {"set_bag7",set_bag7},
+    {"set_pcloop", set_pcloop},
     {"set_max_nodes",set_max_nodes},
     {"set_weights",set_weights},
     {"free",cfree},
