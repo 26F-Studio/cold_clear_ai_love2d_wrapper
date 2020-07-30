@@ -135,6 +135,10 @@ static int get_default_config(lua_State *L){
     CCOptions *options=(CCOptions*)malloc(sizeof(CCOptions));
     CCWeights *weights=(CCWeights*)malloc(sizeof(CCWeights));
     cc_default_options(options);
+    // Not the same with techmino, but suits better
+    // note that rows in cold clear is 0-indexed
+    // maybe it should be settable
+    options->spawn_rule = CC_ROW_21_AND_FALL;
     cc_default_weights(weights);
     lua_pushinteger(L,(lua_Integer)options);
     lua_pushinteger(L,(lua_Integer)weights);
