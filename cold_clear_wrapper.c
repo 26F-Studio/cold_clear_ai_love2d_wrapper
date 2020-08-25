@@ -208,7 +208,6 @@ static int set_threads(lua_State *L){
     return 0;
 }
 
-//供lua创建新的默认选项数据
 static int cfree(lua_State *L){
     void *p=(void*)lua_tointeger(L,1);
     free(p);

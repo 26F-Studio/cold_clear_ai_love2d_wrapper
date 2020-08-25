@@ -1,4 +1,6 @@
 # cold clear ai love2d wrapper
+This is a love2d/lua wrapper for [cold clear](https://github.com/MinusKelvin/cold-clear), in order use it in tetris games made by [love2d game engine](https://love2d.org/).
+
 ## How to build
 ### windows version
 * gcc (mingw or msys2 or tdm-gcc)
@@ -9,7 +11,7 @@
 ### linux version
 * gcc
 * build libcold_clear.so and copy it here
-* run `make`
+* run `make libCCloader.so`
 
 ### android version
 * ndk
@@ -19,35 +21,54 @@
 
 **Note:** To use it on android, you need to put libcold_clear.so in `/lib` and copy `libccloader.so` to *save directory*.
 ```lua
-package.cpath='/data/data/org.love2d.android.embed/files/save/archive/lib?.so;'..package.cpath
-love.filesystem.write("libtest.so", love.filesystem.read("libtest.so"))
-require "test"
+-- Hint, but not the only way to load it
+package.cpath="/data/data/org.love2d.android.embed/files/save/archive/lib?.so;"..package.cpath
+love.filesystem.write("libCCloader.so", love.filesystem.read("libCCloader.so"))
+require "CCloader"
 ```
+
+### Have trouble in building cold clear?
+You can get it from [here](https://github.com/flaribbit/cold-clear/actions).
 
 ## How to use
 ```lua
 require "cold_clear_wrapper"
+
 -- get default options and weights
 options, weights=cc.get_default_config()
+
 -- you can change some options (bool)
 cc.set_options(options, _hold, _20g, _bag7)
+
 -- create new bot
 bot = cc.launch_async(options, weights)
+
 -- refresh current status and field
 -- field is a table contains 400 bools
 cc.reset_async(bot, field, b2b, combo)
+
 -- add next piece
 cc.add_next_piece_async(bot, piece)
+
 -- calculate next move
 cc.request_next_move(bot, jeopardy)
+
 -- or without jeopardy
 cc.request_next_move(bot)
+
 -- get next move
+-- cc_is_dead_async now in status
 status, hold, move = cc.poll_next_move(bot)
+
 -- or blocking version
 status, hold, move = cc.block_next_move(bot)
+
 -- destroy
 cc.destroy_async(bot)
+
+-- remember to free there pointers
+cc.free(options)
+cc.free(weights)
 ```
 
 Some important information from coldclear.h
