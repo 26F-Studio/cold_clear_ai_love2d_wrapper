@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I ./include -s -O2 -DNDEBUG
+CFLAGS=-I ./include -I ./cold-clear/c-api -O2 -DNDEBUG
 ANDROID_CC=path/to/arm-linux-androideabi-gcc
 
 # window x64 build
