@@ -130,6 +130,13 @@ static int default_weights(lua_State *L){
     return 0;
 }
 
+//void cc_fast_weights(CCWeights *weights);
+static int fast_weights(lua_State *L){
+    CCWeights *weights=(CCWeights*)lua_tointeger(L,1);
+    cc_fast_weights(weights);
+    return 0;
+}
+
 //供lua创建新的默认选项数据
 static int get_default_config(lua_State *L){
     CCOptions *options=(CCOptions*)malloc(sizeof(CCOptions));
@@ -271,6 +278,7 @@ static const struct luaL_Reg funcList[]=
     {"block_next_move",block_next_move},
     {"default_options",default_options},
     {"default_weights",default_weights},
+    {"fast_weights",fast_weights},
     {"get_default_config",get_default_config},
     {"set_options",set_options},
     {"set_hold",set_hold},
