@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, ci ]
+  pull_request:
+    branches: [ master, ci ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      submodules: true
+    - name: Download love
+      run: |
+        curl -LO https://github.com/love2d/love/releases/download/11.3/love-11.3-win64.zip
+        7z x love-11.3-win64.zip
+        copy love-11.3-win64/lua51.dll .
+    - name: Build coldclear
+      run: |
+        cd cold-clear/c-api/ && cargo build --release
+        cd ../..
+        copy cold-clear/target/release/cold_clear.dll .
+    - name: Build ccloader
+      run: mingw32-make
+    - name: Artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: win64
+        path: |
+          CCloader.dll
+          cold_clear.dll
