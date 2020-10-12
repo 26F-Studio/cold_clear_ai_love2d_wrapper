@@ -11,7 +11,8 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-      submodules: true
+      with:
+        submodules: true
     - name: Download love
       run: |
         curl -LO https://github.com/love2d/love/releases/download/11.3/love-11.3-win64.zip
