@@ -26,7 +26,7 @@ jobs:
     - name: Build ccloader
       run: mingw32-make
     - name: Artifact
-      uses: actions/upload-artifact@v1.0.0
+      uses: actions/upload-artifact@v2
       with:
         name: win64
         path: |
