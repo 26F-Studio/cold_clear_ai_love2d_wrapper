@@ -24,6 +24,7 @@ jobs:
     - name: Setup rust win32
       run: rustup target add i686-pc-windows-msvc
     - name: Setup tdmgcc
+      shell: cmd
       run: |
         curl -LO https://github.com/jmeubank/tdm-gcc/releases/download/v9.2.0-tdm64-1/tdm64-gcc-9.2.0.exe
         7z x tdm64-gcc-9.2.0.exe
