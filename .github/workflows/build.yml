@@ -23,6 +23,14 @@ jobs:
         copy love-11.3-win32/lua51.dll x86
     - name: Setup rust win32
       run: rustup target add i686-pc-windows-msvc
+    - name: Setup tdmgcc
+      run: |
+        curl -LO https://github.com/jmeubank/tdm-gcc/releases/download/v9.2.0-tdm64-1/tdm64-gcc-9.2.0.exe
+        7z x tdm64-gcc-9.2.0.exe
+        move $PLUGINSDIR tdmgcc
+        cd tdmgcc
+        7z x *.xz
+        7z x *.tar -y
     - name: Build coldclear
       run: |
         cd cold-clear/c-api
@@ -33,6 +41,7 @@ jobs:
         copy cold-clear/target/i686-pc-windows-msvc/release/cold_clear.dll x86
     - name: Build ccloader
       run: |
+        set PATH=%GITHUB_WORKSPACE%\tdmgcc\bin;%PATH%
         mingw32-make
         mingw32-make x86/CCloader.dll
     - name: Artifact
