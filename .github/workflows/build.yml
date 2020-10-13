@@ -41,6 +41,7 @@ jobs:
         copy cold-clear/target/release/cold_clear.dll .
         copy cold-clear/target/i686-pc-windows-msvc/release/cold_clear.dll x86
     - name: Build ccloader
+      shell: cmd
       run: |
         set PATH=%GITHUB_WORKSPACE%\tdmgcc\bin;%PATH%
         mingw32-make
