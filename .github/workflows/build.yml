@@ -16,15 +16,36 @@ jobs:
     - name: Download love
       run: |
         curl -LO https://github.com/love2d/love/releases/download/11.3/love-11.3-win64.zip
+        curl -LO https://github.com/love2d/love/releases/download/11.3/love-11.3-win32.zip
         7z x love-11.3-win64.zip
+        7z x love-11.3-win32.zip
         copy love-11.3-win64/lua51.dll .
+        copy love-11.3-win32/lua51.dll x86
+    - name: Setup rust win32
+      run: rustup target add i686-pc-windows-msvc
+    - name: Setup tdmgcc
+      shell: cmd
+      run: |
+        curl -LO https://github.com/jmeubank/tdm-gcc/releases/download/v9.2.0-tdm64-1/tdm64-gcc-9.2.0.exe
+        7z x tdm64-gcc-9.2.0.exe
+        move $PLUGINSDIR tdmgcc
+        cd tdmgcc
+        7z x *.xz
+        7z x *.tar -y
     - name: Build coldclear
       run: |
-        cd cold-clear/c-api/ && cargo build --release
+        cd cold-clear/c-api
+        cargo build --release
+        cargo build --release --target=i686-pc-windows-msvc
         cd ../..
         copy cold-clear/target/release/cold_clear.dll .
+        copy cold-clear/target/i686-pc-windows-msvc/release/cold_clear.dll x86
     - name: Build ccloader
-      run: mingw32-make
+      shell: cmd
+      run: |
+        set PATH=%GITHUB_WORKSPACE%\tdmgcc\bin;%PATH%
+        mingw32-make
+        mingw32-make x86/CCloader.dll
     - name: Artifact
       uses: actions/upload-artifact@v2
       with:
@@ -32,3 +53,10 @@ jobs:
         path: |
           CCloader.dll
           cold_clear.dll
+    - name: Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: win32
+        path: |
+          x86/CCloader.dll
+          x86/cold_clear.dll
