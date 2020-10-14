@@ -18,8 +18,8 @@ This is a love2d/lua wrapper for [cold clear](https://github.com/MinusKelvin/col
 ### android version
 * ndk
 * build libcold_clear.so and copy it here
-* extract love.apk somewhere, copy path, and replace `path/to/` in `Android.mk` with it
-* run `path/to/ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk`
+* extract love.apk somewhere, copy path
+* run `ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=path/to/love2d/lib`
 
 **Note:** To use it on android, you need to put libcold_clear.so in `/lib` and copy `libccloader.so` to *save directory*.
 ```lua
