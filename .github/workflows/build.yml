@@ -71,6 +71,8 @@ jobs:
       run: sudo apt install love
     - name: Build
       run: make CCloader.so
+    - name: Strip
+      run: strip libcold_clear.so
     - name: Artifact
       uses: actions/upload-artifact@v2
       with:
@@ -109,6 +111,10 @@ jobs:
         cp cold-clear/target/armv7-linux-androideabi/release/libcold_clear.so ./love-11.3-android/lib/armeabi-v7a
         cp cold-clear/target/aarch64-linux-android/release/libcold_clear.so ./love-11.3-android/lib/arm64-v8a
         ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=./love-11.3-android/lib
+    - name: Strip
+      run: |
+        strip love-11.3-android/lib/armeabi-v7a/libcold_clear.so
+        strip love-11.3-android/lib/arm64-v8a/libcold_clear.so
     - name: Artifact
       uses: actions/upload-artifact@v2
       with:
