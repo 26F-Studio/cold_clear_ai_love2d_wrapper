@@ -11,10 +11,9 @@ This is a love2d/lua wrapper for [cold clear](https://github.com/MinusKelvin/col
 * copy lua51.dll here from love2d folder
 * run `make` (maybe `mingw32-make`)
 
-### linux version
-* gcc
-* build libcold_clear.so and copy it here
-* run `make libCCloader.so`
+### linux
+* (For Ubuntu) `sudo apt install gcc make cargo rustc love`
+* `make CCloader.so`
 
 ### android version
 * ndk
