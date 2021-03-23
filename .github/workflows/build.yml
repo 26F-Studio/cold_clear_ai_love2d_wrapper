@@ -61,8 +61,26 @@ jobs:
           x86/CCloader.dll
           x86/cold_clear.dll
 
+  build-linux:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Setup
+      run: sudo apt install love
+    - name: Build
+      run: make CCloader.so
+    - name: Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: linux
+        path: |
+          libcold_clear.so
+          CCloader.so
+
   build-android:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
       with:
