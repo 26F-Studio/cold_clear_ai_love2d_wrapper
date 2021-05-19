@@ -11,7 +11,7 @@
 static int launch_async(lua_State *L) {
     CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
     CCWeights *weights = (CCWeights *)lua_touserdata(L, 2);
-    CCAsyncBot *bot = cc_launch_async(options, weights);
+    CCAsyncBot *bot = cc_launch_async(options, weights, 0, 0, 0);
     lua_pushlightuserdata(L, (void *)bot);
     return 1;
 }
