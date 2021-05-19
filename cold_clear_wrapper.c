@@ -9,23 +9,23 @@
 
 //CCAsyncBot *cc_launch_async(CCOptions *options, CCWeights *weights);
 static int launch_async(lua_State *L) {
-    CCOptions *options = (CCOptions *)lua_tointeger(L, 1);
-    CCWeights *weights = (CCWeights *)lua_tointeger(L, 2);
+    CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
+    CCWeights *weights = (CCWeights *)lua_touserdata(L, 2);
     CCAsyncBot *bot = cc_launch_async(options, weights);
-    lua_pushinteger(L, (lua_Integer)bot);
+    lua_pushlightuserdata(L, (void *)bot);
     return 1;
 }
 
 //void cc_destroy_async(CCAsyncBot *bot);
 static int destroy_async(lua_State *L) {
-    CCAsyncBot *bot = (CCAsyncBot *)lua_tointeger(L, 1);
+    CCAsyncBot *bot = (CCAsyncBot *)lua_touserdata(L, 1);
     cc_destroy_async(bot);
     return 0;
 }
 
 //void cc_reset_async(CCAsyncBot *bot, bool *field, bool b2b, uint32_t combo);
 static int reset_async(lua_State *L) {
-    CCAsyncBot *bot = (CCAsyncBot *)lua_tointeger(L, 1);
+    CCAsyncBot *bot = (CCAsyncBot *)lua_touserdata(L, 1);
     bool b2b = lua_toboolean(L, 3);
     int combo = lua_tointeger(L, 4);
     bool field[400];
@@ -40,7 +40,7 @@ static int reset_async(lua_State *L) {
 
 //void cc_add_next_piece_async(CCAsyncBot *bot, CCPiece piece);
 static int add_next_piece_async(lua_State *L) {
-    CCAsyncBot *bot = (CCAsyncBot *)lua_tointeger(L, 1);
+    CCAsyncBot *bot = (CCAsyncBot *)lua_touserdata(L, 1);
     int piece = lua_tointeger(L, 2);
     cc_add_next_piece_async(bot, piece);
     return 0;
@@ -48,7 +48,7 @@ static int add_next_piece_async(lua_State *L) {
 
 //void cc_request_next_move(CCAsyncBot *bot, uint32_t incoming);
 static int request_next_move(lua_State *L) {
-    CCAsyncBot *bot = (CCAsyncBot *)lua_tointeger(L, 1);
+    CCAsyncBot *bot = (CCAsyncBot *)lua_touserdata(L, 1);
     if (lua_isnumber(L, 2)) {
         cc_request_next_move(bot, lua_tointeger(L, 2));
     } else {
@@ -98,7 +98,7 @@ int return_cc_move(lua_State *L, CCBotPollStatus ret, CCMove *move, CCPlanPlacem
 //    uint32_t *plan_length
 //);
 static int poll_next_move(lua_State *L) {
-    CCAsyncBot *bot = (CCAsyncBot *)lua_tointeger(L, 1);
+    CCAsyncBot *bot = (CCAsyncBot *)lua_touserdata(L, 1);
     CCMove move;
     CCBotPollStatus ret = cc_poll_next_move(bot, &move, NULL, NULL);
     return return_cc_move(L, ret, &move, NULL, NULL);
@@ -111,7 +111,7 @@ static int poll_next_move(lua_State *L) {
 //    uint32_t *plan_length
 //);
 static int block_next_move(lua_State *L) {
-    CCAsyncBot *bot = (CCAsyncBot *)lua_tointeger(L, 1);
+    CCAsyncBot *bot = (CCAsyncBot *)lua_touserdata(L, 1);
     CCMove move;
     CCBotPollStatus ret = cc_block_next_move(bot, &move, NULL, NULL);
     return return_cc_move(L, ret, &move, NULL, NULL);
@@ -119,21 +119,21 @@ static int block_next_move(lua_State *L) {
 
 //void cc_default_options(CCOptions *options);
 static int default_options(lua_State *L) {
-    CCOptions *options = (CCOptions *)lua_tointeger(L, 1);
+    CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
     cc_default_options(options);
     return 0;
 }
 
 //void cc_default_weights(CCWeights *weights);
 static int default_weights(lua_State *L) {
-    CCWeights *weights = (CCWeights *)lua_tointeger(L, 1);
+    CCWeights *weights = (CCWeights *)lua_touserdata(L, 1);
     cc_default_weights(weights);
     return 0;
 }
 
 //void cc_fast_weights(CCWeights *weights);
 static int fast_weights(lua_State *L) {
-    CCWeights *weights = (CCWeights *)lua_tointeger(L, 1);
+    CCWeights *weights = (CCWeights *)lua_touserdata(L, 1);
     cc_fast_weights(weights);
     return 0;
 }
@@ -148,14 +148,14 @@ static int get_default_config(lua_State *L) {
     // maybe it should be settable
     options->spawn_rule = CC_ROW_21_AND_FALL;
     cc_default_weights(weights);
-    lua_pushinteger(L, (lua_Integer)options);
-    lua_pushinteger(L, (lua_Integer)weights);
+    lua_pushlightuserdata(L, (void *)options);
+    lua_pushlightuserdata(L, (void *)weights);
     return 2;
 }
 
 //供lua调用的hold 20g bag7 pcf设置
 static int set_options(lua_State *L) {
-    CCOptions *options = (CCOptions *)lua_tointeger(L, 1);
+    CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
     bool hold = lua_toboolean(L, 2);
     bool _20g = lua_toboolean(L, 3);
     bool bag7 = lua_toboolean(L, 4);
@@ -168,62 +168,62 @@ static int set_options(lua_State *L) {
 }
 
 static int set_hold(lua_State *L) {
-    CCOptions *options = (CCOptions *)lua_tointeger(L, 1);
+    CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
     bool hold = lua_toboolean(L, 2);
     options->use_hold = hold;
     return 0;
 }
 
 static int set_20g(lua_State *L) {
-    CCOptions *options = (CCOptions *)lua_tointeger(L, 1);
+    CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
     bool _20g = lua_toboolean(L, 2);
     options->mode = _20g;
     return 0;
 }
 
 static int set_bag7(lua_State *L) {
-    CCOptions *options = (CCOptions *)lua_tointeger(L, 1);
+    CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
     bool bag7 = lua_toboolean(L, 2);
     options->speculate = bag7;
     return 0;
 }
 
 static int set_pcloop(lua_State *L) {
-    CCOptions *options = (CCOptions *)lua_tointeger(L, 1);
+    CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
     bool pcloop = lua_toboolean(L, 2);
     options->pcloop = pcloop;
     return 0;
 }
 
 static int set_min_nodes(lua_State *L) {
-    CCOptions *options = (CCOptions *)lua_tointeger(L, 1);
+    CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
     int min_nodes = lua_tointeger(L, 2);
     options->min_nodes = min_nodes;
     return 0;
 }
 
 static int set_max_nodes(lua_State *L) {
-    CCOptions *options = (CCOptions *)lua_tointeger(L, 1);
+    CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
     int max_nodes = lua_tointeger(L, 2);
     options->max_nodes = max_nodes;
     return 0;
 }
 
 static int set_threads(lua_State *L) {
-    CCOptions *options = (CCOptions *)lua_tointeger(L, 1);
+    CCOptions *options = (CCOptions *)lua_touserdata(L, 1);
     int threads = lua_tointeger(L, 2);
     options->threads = threads;
     return 0;
 }
 
 static int cfree(lua_State *L) {
-    void *p = (void *)lua_tointeger(L, 1);
+    void *p = lua_touserdata(L, 1);
     free(p);
     return 0;
 }
 
 static int set_weights(lua_State *L) {
-    CCWeights *weights = (CCWeights *)lua_tointeger(L, 1);
+    CCWeights *weights = (CCWeights *)lua_touserdata(L, 1);
     while (lua_next(L, 2)) {
         const char *key = lua_tostring(L, -2);
         int value = lua_tonumber(L, -1);
