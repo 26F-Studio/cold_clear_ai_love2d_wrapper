@@ -5,18 +5,18 @@
 This is a love2d/lua wrapper for [cold clear](https://github.com/MinusKelvin/cold-clear), in order use it in tetris games made by [love2d game engine](https://love2d.org/).
 
 ## How to build
-### windows version
-* gcc (mingw or msys2 or tdm-gcc)
+`git clone https://github.com/26F-Studio/cold_clear_ai_love2d_wrapper --recursive`
+### windows
+* gcc ([tdm-gcc](https://jmeubank.github.io/tdm-gcc/) or mingw or msys2)
 * build cold_clear.dll and copy it here
 * copy lua51.dll here from love2d folder
-* run `make` (maybe `mingw32-make`)
+* run `mingw32-make`
 
-### linux version
-* gcc
-* build libcold_clear.so and copy it here
-* run `make libCCloader.so`
+### linux
+* (For Ubuntu) `sudo apt install gcc make cargo rustc love`
+* `make CCloader.so`
 
-### android version
+### android
 * ndk
 * build libcold_clear.so and copy it here
 * extract love.apk somewhere, copy path
