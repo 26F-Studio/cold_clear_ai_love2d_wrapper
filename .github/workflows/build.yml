@@ -130,3 +130,24 @@ jobs:
         path: |
           love-11.3-android/lib/arm64-v8a/libcold_clear.so
           libs/arm64-v8a/libCCloader.so
+
+  build-macOS:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Download love
+      run: |
+        curl -LO https://github.com/love2d/love/releases/download/11.3/love-11.3-macos.zip
+        7z e love-11.3-macos.zip love.app/Contents/Frameworks/Lua.framework/Versions/A/Lua
+        mv Lua libluajit.a
+    - name: Build CCloader
+      run: make CCloader.dylib
+    - name: Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: macOS
+        path: |
+          libcold_clear.a
+          CCloader.dylib
