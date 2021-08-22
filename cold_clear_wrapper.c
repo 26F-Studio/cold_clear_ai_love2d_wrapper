@@ -29,11 +29,13 @@ static int reset_async(lua_State *L) {
     bool b2b = lua_toboolean(L, 3);
     int combo = lua_tointeger(L, 4);
     bool field[400];
-    int i = 0;
-    while (lua_next(L, 2) && i < 400) {
-        field[i++] = lua_toboolean(L, -1);
+    int size = luaL_getn(L, 1);
+    for (int i=1; i<=size; i++) {
+        lua_rawgeti(L, 2, i);
+        field[i] = lua_toboolean(L, -1);
         lua_pop(L, 1);
     }
+    /* Should we check for whether i==400 ? */
     cc_reset_async(bot, field, b2b, combo);
     return 0;
 }
