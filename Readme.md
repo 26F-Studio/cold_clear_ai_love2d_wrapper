@@ -4,6 +4,24 @@
 
 This is a love2d/lua wrapper for [cold clear](https://github.com/MinusKelvin/cold-clear), in order use it in tetris games made by [love2d game engine](https://love2d.org/).
 
+## Pitfalls
+
+### Piece id
+
+In the code of cold clear, the pieces are represented as integer thus:
+```c
+typedef enum CCPiece {
+    CC_I, CC_O, CC_T, CC_L, CC_J, CC_S, CC_Z
+} CCPiece;
+```
+
+However, for *tech*nical reasons (pun intended!), the wrapper uses a reversed order,
+i.e. Z S J L T O I.
+
+### Error messages
+
+The whole API segfaults on any type errors. To see sensible error messages and stack traces, uncomment the `#define DEBUG_CC` macro in `cold_clear_wrapper.c`.
+
 ## How to build
 `git clone https://github.com/26F-Studio/cold_clear_ai_love2d_wrapper --recursive`
 ### windows
@@ -87,10 +105,6 @@ typedef enum CCBotPollStatus {
     CC_WAITING,
     CC_BOT_DEAD
 } CCBotPollStatus;
-
-typedef enum CCPiece {
-    CC_I, CC_O, CC_T, CC_L, CC_J, CC_S, CC_Z
-} CCPiece;
 
 typedef enum CCMovement {
     CC_LEFT, CC_RIGHT,
