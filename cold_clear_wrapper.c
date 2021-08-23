@@ -51,7 +51,7 @@ static int reset_async(lua_State *L) {
     bool b2b = lua_toboolean(L, 3);
     int combo = lua_tointeger(L, 4);
     bool field[400];
-    int size = luaL_getn(L, 1);
+    int size = luaL_getn(L, 2);
     for (int i = 1; i <= size; i++) {
         lua_rawgeti(L, 2, i);
         field[i] = lua_toboolean(L, -1);
