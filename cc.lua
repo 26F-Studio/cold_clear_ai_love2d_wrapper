@@ -11,18 +11,18 @@ local CCBot = {}
 
 ---@return CCOptions
 ---@return CCWeights
-function cc.get_default_config() end
+function cc.getDefaultConfig() end
 
 ---@param weights CCWeights
-function cc.default_weights(weights) end
+function cc.defaultWeights(weights) end
 
 ---@param options CCOptions
-function cc.default_options(options) end
+function cc.defaultOptions(options) end
 
 ---@param options CCOptions
 ---@param weights CCWeights
 ---@return CCBot
-function cc.launch_async(options, weights) end
+function cc.launchAsync(options, weights) end
 
 ---@return string
 function cc.about() end
