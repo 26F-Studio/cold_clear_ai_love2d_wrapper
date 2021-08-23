@@ -13,12 +13,6 @@ local CCBot = {}
 ---@return CCWeights
 function cc.getDefaultConfig() end
 
----@param weights CCWeights
-function cc.defaultWeights(weights) end
-
----@param options CCOptions
-function cc.defaultOptions(options) end
-
 ---@param options CCOptions
 ---@param weights CCWeights
 ---@return CCBot
@@ -51,6 +45,8 @@ function CCBot:getMove() end
 function CCBot:blockNextMove() end
 
 
+function CCOptions.defaultOptions() end
+
 ---@param canhold boolean
 ---@param is20g boolean
 ---@param isbag7 boolean
@@ -71,6 +67,8 @@ function CCOptions:setPCLoop(ispcloop) end
 ---@param nodes integer
 function CCOptions:setNode(nodes) end
 
+
+function CCWeights:defaultWeights() end
 
 ---@param key string
 ---@param value number

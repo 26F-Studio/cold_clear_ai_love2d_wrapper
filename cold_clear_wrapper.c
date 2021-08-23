@@ -303,8 +303,6 @@ Changing these is as easy as a Find+Replace, so I'm not deciding for now. */
 static const struct luaL_Reg funcList[] = {
     {"about", about},
     {"launchAsync", launch_async},
-    {"defaultOptions", default_options},
-    {"defaultWeights", default_weights},
     {"getDefaultConfig", get_default_config},
     {0, 0}};
 
@@ -318,6 +316,7 @@ static const struct luaL_Reg methList[] = {
     {0, 0}};
 
 static const struct luaL_Reg optionsList[] = {
+    {"defaultOptions", default_options},
     {"setOptions", set_options},
     {"setHold", set_hold},
     {"set20G", set_20g},
@@ -327,6 +326,7 @@ static const struct luaL_Reg optionsList[] = {
     {0, 0}};
 
 static const struct luaL_Reg weightsList[] = {
+    {"defaultWeights", default_weights},
     {"setWeights", set_weights},
     {"fastWeights", fast_weights},
     {0, 0}};
