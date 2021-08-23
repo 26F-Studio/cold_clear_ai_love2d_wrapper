@@ -7,7 +7,7 @@
 #include "lua.h"
 #include "lualib.h"
 
-// #define DEBUG_CC
+#define DEBUG_CC
 #ifdef DEBUG_CC
 static void *check_userdata(lua_State *L, int index, const char *tname) {
     void *ud = luaL_checkudata(L, index, tname);
@@ -40,8 +40,8 @@ static int launch_async(lua_State *L) {
 
 //void cc_destroy_async(CCAsyncBot *bot);
 static int destroy_async(lua_State *L) {
-    CCAsyncBot **bot = (CCAsyncBot **)check_userdata(L, 1, "CCBot");
-    cc_destroy_async(*bot);
+    CCAsyncBot *bot = *(CCAsyncBot **)check_userdata(L, 1, "CCBot");
+    cc_destroy_async(bot);
     return 0;
 }
 
@@ -52,12 +52,12 @@ static int reset_async(lua_State *L) {
     int combo = lua_tointeger(L, 4);
     bool field[400];
     int size = luaL_getn(L, 2);
-    for (int i = 1; i <= size; i++) {
+    int i;
+    for (i = 1; i <= size; i++) {
         lua_rawgeti(L, 2, i);
-        field[i] = lua_toboolean(L, -1);
+        field[i-1] = lua_toboolean(L, -1);
         lua_pop(L, 1);
     }
-    /* Should we check for whether i==400 ? */
     cc_reset_async(bot, field, b2b, combo);
     return 0;
 }
