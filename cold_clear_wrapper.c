@@ -9,7 +9,7 @@
 
 // #define DEBUG_CC
 #ifdef DEBUG_CC
-static void* check_userdata(lua_State *L, int index, const char *tname) {
+static void *check_userdata(lua_State *L, int index, const char *tname) {
     void *ud = luaL_checkudata(L, index, tname);
     luaL_argcheck(L, ud != NULL, index, tname);
     return ud;
@@ -18,10 +18,10 @@ static void* check_userdata(lua_State *L, int index, const char *tname) {
 #define lua_tostring luaL_checkstring
 #define lua_tonumber luaL_checknumber
 #else  /* DEBUG_CC */
-static void* check_userdata(lua_State *L, int index, const char *tname) {
+static void *check_userdata(lua_State *L, int index, const char *tname) {
     return lua_touserdata(L, index);
 }
-#endif  /* DEBUG_CC */
+#endif /* DEBUG_CC */
 
 //CCAsyncBot *cc_launch_async(CCOptions *options, CCWeights *weights);
 static int launch_async(lua_State *L) {
@@ -52,7 +52,7 @@ static int reset_async(lua_State *L) {
     int combo = lua_tointeger(L, 4);
     bool field[400];
     int size = luaL_getn(L, 1);
-    for (int i=1; i<=size; i++) {
+    for (int i = 1; i <= size; i++) {
         lua_rawgeti(L, 2, i);
         field[i] = lua_toboolean(L, -1);
         lua_pop(L, 1);
@@ -66,7 +66,7 @@ static int reset_async(lua_State *L) {
 static int add_next_piece_async(lua_State *L) {
     CCAsyncBot *bot = *(CCAsyncBot **)check_userdata(L, 1, "CCBot");
     int piece = lua_tointeger(L, 2);
-    cc_add_next_piece_async(bot, 7-piece);
+    cc_add_next_piece_async(bot, 7 - piece);
     return 0;
 }
 
@@ -344,9 +344,9 @@ int luaopen_CCloader(lua_State *L) {
     luaL_register(L, 0, weightsList);
     luaL_newmetatable(L, "CCBot");
     lua_pushstring(L, "__index");
-    lua_pushvalue(L, -2);  /* pushes the metatable again */
-    lua_settable(L, -3);  /* metatable.__index = metatable */
-    luaL_register(L, 0, methList);  /* registers methList into the metatable */
+    lua_pushvalue(L, -2);          /* pushes the metatable again */
+    lua_settable(L, -3);           /* metatable.__index = metatable */
+    luaL_register(L, 0, methList); /* registers methList into the metatable */
     // we don't need to return these metatables, because the corresponding objects
     // will automatically have those metatables set.
     luaL_register(L, "cc", funcList);
