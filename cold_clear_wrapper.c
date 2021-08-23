@@ -294,7 +294,7 @@ static int set_weights(lua_State *L) {
 }
 
 static int about(lua_State *L) {
-    lua_pushstring(L, "wrapper by flaribbit");
+    lua_pushstring(L, "wrapper by 26F-Studio");
     return 1;
 }
 
