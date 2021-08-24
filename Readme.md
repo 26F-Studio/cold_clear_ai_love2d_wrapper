@@ -1,8 +1,26 @@
 # cold clear ai love2d wrapper
 [![CI](https://github.com/26F-Studio/cold_clear_ai_love2d_wrapper/workflows/CI/badge.svg)](https://github.com/26F-Studio/cold_clear_ai_love2d_wrapper/actions)
-![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20android-brightgreen.svg)
+![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20android%20%7C%20macos-brightgreen.svg)
 
 This is a love2d/lua wrapper for [cold clear](https://github.com/MinusKelvin/cold-clear), in order use it in tetris games made by [love2d game engine](https://love2d.org/).
+
+## Pitfalls
+
+### Piece id
+
+In the code of cold clear, the pieces are represented as integer thus:
+```c
+typedef enum CCPiece {
+    CC_I, CC_O, CC_T, CC_L, CC_J, CC_S, CC_Z
+} CCPiece;
+```
+
+However, for *tech*nical reasons (pun intended!), the wrapper uses a reversed order,
+i.e. `Z S J L T O I`.
+
+### Error messages
+
+The whole API segfaults on any type errors. To see sensible error messages and stack traces, uncomment the `#define DEBUG_CC` macro in `cold_clear_wrapper.c`.
 
 ## How to build
 `git clone https://github.com/26F-Studio/cold_clear_ai_love2d_wrapper --recursive`
@@ -30,54 +48,8 @@ love.filesystem.write("libCCloader.so", love.filesystem.read("libCCloader.so"))
 require "CCloader"
 ```
 
-### Have trouble in building cold clear?
-You can get it from [here](https://github.com/flaribbit/cold-clear/actions).
-
 ## How to use
-```lua
-require "cold_clear_wrapper"
-
--- get default options and weights
-options, weights=cc.get_default_config()
-
--- maybe try optional fast game config weights
-cc.fast_weights(weights)
-
--- or change some weights
-cc.set_weights(weights, {key1=val1, key2=val2, ...})
-
--- also you can change some options (bool)
-cc.set_options(options, _hold, _20g, _bag7)
-
--- create new bot
-bot = cc.launch_async(options, weights)
-
--- refresh current status and field
--- field is a table contains 400 bools
-cc.reset_async(bot, field, b2b, combo)
-
--- add next piece
-cc.add_next_piece_async(bot, piece)
-
--- calculate next move
-cc.request_next_move(bot, jeopardy)
-
--- or without jeopardy
-cc.request_next_move(bot)
-
--- get next move
--- cc_is_dead_async now in status
-status, hold, move = cc.poll_next_move(bot)
--- or blocking version
-status, hold, move = cc.block_next_move(bot)
-
--- destroy
-cc.destroy_async(bot)
-
--- remember to free there pointers
-cc.free(options)
-cc.free(weights)
-```
+See `cc.lua`
 
 Some important information from coldclear.h
 
@@ -87,10 +59,6 @@ typedef enum CCBotPollStatus {
     CC_WAITING,
     CC_BOT_DEAD
 } CCBotPollStatus;
-
-typedef enum CCPiece {
-    CC_I, CC_O, CC_T, CC_L, CC_J, CC_S, CC_Z
-} CCPiece;
 
 typedef enum CCMovement {
     CC_LEFT, CC_RIGHT,
