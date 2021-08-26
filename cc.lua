@@ -26,7 +26,7 @@ function cc.about() end
 ---@param field boolean[]
 ---@param b2b boolean
 ---@param combo integer
-function CCBot:update(bot, field, b2b, combo) end
+function CCBot:reset(bot, field, b2b, combo) end
 
 ---@param piece integer
 function CCBot:addNext(piece) end

@@ -308,7 +308,7 @@ static const struct luaL_Reg funcList[] = {
 
 static const struct luaL_Reg methList[] = {
     {"__gc", destroy_async},
-    {"update", reset_async},
+    {"reset", reset_async},
     {"addNext", add_next_piece_async},
     {"think", request_next_move},
     {"getMove", poll_next_move},
