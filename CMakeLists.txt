@@ -14,10 +14,15 @@ set(CMAKE_C_STANDARD 11 CACHE STRING "Cmake c standard" FORCE)
 message(STATUS "C standard is ${CMAKE_C_STANDARD}")
 message(STATUS "Processor is ${CMAKE_SYSTEM_PROCESSOR}")
 
-
-### Detect cold_clear lib
+### Detect libs
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/libcold_clear.a")
     set(COLD_CLEAR_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libcold_clear.a")
+else ()
+    message(FATAL_ERROR "Could not find libcold_clear.a in the ./lib/ directory")
+endif ()
+
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/libluajit.a")
+    set(LUA_JIT_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libluajit.a")
 else ()
     message(FATAL_ERROR "Could not find libcold_clear.a in the ./lib/ directory")
 endif ()
@@ -26,9 +31,17 @@ endif ()
 ### Build shared library
 add_library(${PROJECT_NAME} SHARED cold_clear_wrapper.c)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${COLD_CLEAR_LIB})
+find_library(FRAMEWORK_Security
+        NAMES Security
+        PATHS ${CMAKE_OSX_SYSROOT}/System/Library
+        PATH_SUFFIXES Frameworks
+        NO_DEFAULT_PATH)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${FRAMEWORK_Security} ${COLD_CLEAR_LIB} ${LUA_JIT_LIB})
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/cold-clear/c-api)
 
 
 ### install shared library
