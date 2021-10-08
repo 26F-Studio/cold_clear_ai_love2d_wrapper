@@ -1,6 +1,6 @@
 # cold clear ai love2d wrapper
 [![CI](https://github.com/26F-Studio/cold_clear_ai_love2d_wrapper/workflows/CI/badge.svg)](https://github.com/26F-Studio/cold_clear_ai_love2d_wrapper/actions)
-![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20android%20%7C%20macos-brightgreen.svg)
+![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20android%20%7C%20macos%20%7C%20ios-brightgreen.svg)
 
 This is a love2d/lua wrapper for [cold clear](https://github.com/MinusKelvin/cold-clear), in order use it in tetris games made by [love2d game engine](https://love2d.org/).
 
