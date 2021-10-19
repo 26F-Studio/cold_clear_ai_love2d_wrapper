@@ -152,15 +152,28 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Install cargo-lipo
+        run: |
+          cargo install cargo-lipo
+      - name: Add toolchains
+        run: |
+          rustup target add aarch64-apple-ios x86_64-apple-ios
+      - name: Build Cold Clear
+        run: |
+          cd cold-clear
+          cargo lipo --release -p c-api
+          mv target/universal/release/libcold_clear.a ../lib/
       - name: CMake and build CCloader
         run: |
           ./MacReleaseIOS.sh
       - name: Move library
         run: |
           mv cmake-build-release-ios/CCloader/lib/libCCloader.a libCCloader.a
-      - name: Artifact11
+          mv lib/libcold_clear.a libcold_clear.a
+      - name: Artifact
         uses: actions/upload-artifact@v2
         with:
           name: iOS
           path: |
             libCCloader.a
+            libcold_clear.a
