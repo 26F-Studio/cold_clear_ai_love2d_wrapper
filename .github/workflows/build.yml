@@ -163,7 +163,7 @@ jobs:
           cargo install cargo-lipo
       - name: Add toolchains
         run: |
-          rustup target add aarch64-apple-ios x86_64-apple-ios armv7-apple-ios i386-apple-ios
+          rustup target add aarch64-apple-ios x86_64-apple-ios
       - name: Build Cold Clear
         run: |
           cd cold-clear
