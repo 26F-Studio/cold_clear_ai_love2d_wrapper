@@ -101,13 +101,13 @@ jobs:
         cargo ndk --platform 21 --target aarch64-linux-android build --release
     - name: Build ccloader
       run: |
-        export PATH="${GITHUB_WORKSPACE}/android-ndk-r21:$PATH"
+        export PATH="${ANDROID_NDK_HOME}:$PATH"
         cp cold-clear/target/armv7-linux-androideabi/release/libcold_clear.so ./love-11.3-android/lib/armeabi-v7a
         cp cold-clear/target/aarch64-linux-android/release/libcold_clear.so ./love-11.3-android/lib/arm64-v8a
         ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=./love-11.3-android/lib
     - name: Strip
       run: |
-        export PATH="${GITHUB_WORKSPACE}/android-ndk-r21/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin:$PATH"
+        export PATH="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin:$PATH"
         strip love-11.3-android/lib/armeabi-v7a/libcold_clear.so
         strip love-11.3-android/lib/arm64-v8a/libcold_clear.so
     - name: Artifact
