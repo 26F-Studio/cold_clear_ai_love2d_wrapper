@@ -160,13 +160,13 @@ jobs:
           submodules: true
       - name: CMake and build CCloader
         run: |
-          chmod 777 ./MacReleaseIOS.sh && ./MacReleaseIOS.sh
-      - name: Rename library
+          ./MacReleaseIOS.sh
+      - name: Move library
         run: |
-          mv cmake-build-release-ios/CCloader/lib/libCCloader.dylib CCloader.dylib
+          mv cmake-build-release-ios/CCloader/lib/libCCloader.a libCCloader.a
       - name: Artifact11
         uses: actions/upload-artifact@v2
         with:
           name: iOS
           path: |
-            CCloader.dylib
+            libCCloader.a
