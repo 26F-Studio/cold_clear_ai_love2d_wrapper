@@ -28,8 +28,8 @@ else ()
 endif ()
 
 
-### Build shared library
-add_library(${PROJECT_NAME} SHARED cold_clear_wrapper.c)
+### Build static library
+add_library(${PROJECT_NAME} cold_clear_wrapper.c)
 
 find_library(FRAMEWORK_Security
         NAMES Security
@@ -44,7 +44,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/cold-clear/c-api)
 
 
-### install shared library
+### install static library
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}")
 install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Config
         ARCHIVE DESTINATION lib
