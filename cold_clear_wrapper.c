@@ -171,10 +171,7 @@ static int get_default_config(lua_State *L) {
     luaL_getmetatable(L, "CCWeights");
     lua_setmetatable(L, -2);
     cc_default_options(options);
-    // Not the same with techmino, but suits better
-    // note that rows in cold clear is 0-indexed
-    // maybe it should be settable
-    options->spawn_rule = CC_ROW_21_AND_FALL;
+    options->spawn_rule = CC_ROW_20;
     cc_default_weights(weights);
     return 2;
 }
