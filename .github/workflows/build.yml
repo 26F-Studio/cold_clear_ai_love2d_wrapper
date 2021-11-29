@@ -3,6 +3,8 @@ name: CI
 on:
   push:
     branches: [ master, ci* ]
+  workflow_dispatch:
+    null
 
 jobs:
   build-windows:
