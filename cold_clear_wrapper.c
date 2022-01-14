@@ -52,8 +52,12 @@ static int reset_async(lua_State *L) {
     int combo = lua_tointeger(L, 4);
     bool field[400];
     int size = luaL_getn(L, 2);
+    if (size != 400) {
+        return luaL_error(L, "[cc_reset_async] The field passed to ccwrapper is not of length 400.");
+        // This will not return, see https://www.lua.org/manual/5.1/manual.html#luaL_error
+    }
     int i;
-    for (i = 1; i <= size; i++) {
+    for (i = 1; i <= 400; i++) {
         lua_rawgeti(L, 2, i);
         field[i-1] = lua_toboolean(L, -1);
         lua_pop(L, 1);
