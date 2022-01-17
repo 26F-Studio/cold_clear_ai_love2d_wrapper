@@ -193,8 +193,7 @@ static int get_default_config(lua_State *L) {
     luaL_getmetatable(L, "CCWeights");
     lua_setmetatable(L, -2);
     cc_default_options(options);
-    options->spawn_rule.tag = CC_ROW_VAR;
-    options->spawn_rule.n = 20;
+    options->spawn_rule = CC_ROW_VAR;
     cc_default_weights(weights);
     return 2;
 }
