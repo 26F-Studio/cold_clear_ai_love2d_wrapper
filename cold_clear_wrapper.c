@@ -45,7 +45,7 @@ static int destroy_async(lua_State *L) {
     return 0;
 }
 
-//void cc_reset_async(CCAsyncBot *bot, bool *field, uint32_t b2b_gauge,
+//void cc_reset_async(CCAsyncBot *bot, bool *field, int32_t b2b_gauge,
 //  uint32_t combo, uint32_t pc_combo, uint32_t lines, int32_t spawn);
 static int reset_async(lua_State *L) {
     CCAsyncBot *bot = *(CCAsyncBot **)check_userdata(L, 1, "CCBot");
