@@ -57,7 +57,10 @@ static int reset_async(lua_State *L) {
     bool field[400];
     int size = luaL_getn(L, 2);
     int i;
-    for (i = 1; i <= size; i++) {
+    for (i = 0; i < 400; ++i) {
+        field[i] = false;
+    }
+    for (i = 1; i <= size && i <= 400; i++) {
         lua_rawgeti(L, 2, i);
         field[i-1] = lua_toboolean(L, -1);
         lua_pop(L, 1);
