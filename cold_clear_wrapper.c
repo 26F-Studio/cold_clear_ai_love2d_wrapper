@@ -45,20 +45,27 @@ static int destroy_async(lua_State *L) {
     return 0;
 }
 
-//void cc_reset_async(CCAsyncBot *bot, bool *field, bool b2b, uint32_t combo);
+//void cc_reset_async(CCAsyncBot *bot, bool *field, int32_t b2b_gauge,
+//  uint32_t combo, uint32_t pc_combo, uint32_t lines, int32_t spawn);
 static int reset_async(lua_State *L) {
     CCAsyncBot *bot = *(CCAsyncBot **)check_userdata(L, 1, "CCBot");
-    bool b2b = lua_toboolean(L, 3);
+    int b2b = lua_tointeger(L, 3);
     int combo = lua_tointeger(L, 4);
+    int pc_combo = lua_tointeger(L, 5);
+    int lines = lua_tointeger(L, 6);
+    int spawn = lua_tointeger(L, 7);
     bool field[400];
     int size = luaL_getn(L, 2);
     int i;
-    for (i = 1; i <= size; i++) {
+    for (i = 0; i < 400; ++i) {
+        field[i] = false;
+    }
+    for (i = 1; i <= size && i <= 400; i++) {
         lua_rawgeti(L, 2, i);
         field[i-1] = lua_toboolean(L, -1);
         lua_pop(L, 1);
     }
-    cc_reset_async(bot, field, b2b, combo);
+    cc_reset_async(bot, field, b2b, combo, pc_combo, lines, spawn);
     return 0;
 }
 
@@ -81,7 +88,7 @@ static int request_next_move(lua_State *L) {
     return 0;
 }
 
-int return_cc_move(lua_State *L, CCBotPollStatus ret, CCMove *move, CCPlanPlacement *plan, uint32_t *plan_length) {
+static int return_cc_move(lua_State *L, CCBotPollStatus ret, CCMove *move, CCPlanPlacement *plan, uint32_t *plan_length) {
     lua_pushnumber(L, ret);  //成功否
     if (CC_MOVE_PROVIDED == ret) {
         lua_newtable(L);
@@ -107,12 +114,26 @@ int return_cc_move(lua_State *L, CCBotPollStatus ret, CCMove *move, CCPlanPlacem
             lua_pushnumber(L, move->movements[i]);
             lua_settable(L, table);
         }
+        if (plan) {
+            lua_pushnumber(L, plan->b2b_gauge);
+            lua_pushnumber(L, plan->attack);
+            lua_pushnumber(L, plan->extra);
+        } else {
+            lua_pushnil(L);
+            lua_pushnil(L);
+            lua_pushnil(L);
+        }
+        lua_pushnumber(L, move->spawn);
     } else {
         lua_pushnil(L);
         lua_pushnil(L);
         lua_pushnil(L);
+        lua_pushnil(L);
+        lua_pushnil(L);
+        lua_pushnil(L);
+        lua_pushnil(L);
     }
-    return 4;
+    return 8;
 }
 
 //CCBotPollStatus cc_poll_next_move(
@@ -124,8 +145,10 @@ int return_cc_move(lua_State *L, CCBotPollStatus ret, CCMove *move, CCPlanPlacem
 static int poll_next_move(lua_State *L) {
     CCAsyncBot *bot = *(CCAsyncBot **)check_userdata(L, 1, "CCBot");
     CCMove move;
-    CCBotPollStatus ret = cc_poll_next_move(bot, &move, NULL, NULL);
-    return return_cc_move(L, ret, &move, NULL, NULL);
+    CCPlanPlacement plans[1];
+    uint32_t size = 1;
+    CCBotPollStatus ret = cc_poll_next_move(bot, &move, plans, &size);
+    return return_cc_move(L, ret, &move, plans, &size);
 }
 
 //CCBotPollStatus cc_block_next_move(
@@ -137,8 +160,10 @@ static int poll_next_move(lua_State *L) {
 static int block_next_move(lua_State *L) {
     CCAsyncBot *bot = *(CCAsyncBot **)check_userdata(L, 1, "CCBot");
     CCMove move;
-    CCBotPollStatus ret = cc_block_next_move(bot, &move, NULL, NULL);
-    return return_cc_move(L, ret, &move, NULL, NULL);
+    CCPlanPlacement plans[1];
+    uint32_t size = 1;
+    CCBotPollStatus ret = cc_block_next_move(bot, &move, plans, &size);
+    return return_cc_move(L, ret, &move, plans, &size);
 }
 
 //void cc_default_options(CCOptions *options);
@@ -171,7 +196,7 @@ static int get_default_config(lua_State *L) {
     luaL_getmetatable(L, "CCWeights");
     lua_setmetatable(L, -2);
     cc_default_options(options);
-    options->spawn_rule = CC_ROW_20;
+    options->spawn_rule = CC_ROW_VAR;
     cc_default_weights(weights);
     return 2;
 }

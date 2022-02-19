@@ -24,9 +24,12 @@ function cc.about() end
 
 ---@param bot CCBot
 ---@param field boolean[]
----@param b2b boolean
+---@param b2b integer
 ---@param combo integer
-function CCBot:reset(bot, field, b2b, combo) end
+---@param pc_combo integer
+---@param lines integer
+---@param spawn integer
+function CCBot:reset(bot, field, b2b, combo, pc_combo, lines, spawn) end
 
 ---@param piece integer
 function CCBot:addNext(piece) end
@@ -36,12 +39,22 @@ function CCBot:think(incoming) end
 
 ---@return integer status
 ---@return boolean hold
+---@return integer[][] target
 ---@return integer[] move
+---@return integer b2b_gauge
+---@return integer attack
+---@return integer extra
+---@return integer spawn
 function CCBot:getMove() end
 
 ---@return integer status
 ---@return boolean hold
+---@return integer[][] target
 ---@return integer[] move
+---@return integer b2b_gauge
+---@return integer attack
+---@return integer extra
+---@return integer spawn
 function CCBot:blockNextMove() end
 
 
