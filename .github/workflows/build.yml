@@ -82,7 +82,7 @@ jobs:
           rustup target add aarch64-linux-android armv7-linux-androideabi
       - name: Build CC loader
         run: |
-          # export PATH="${ANDROID_NDK_HOME}:$PATH"
+          export ANDROID_NDK_HOME="/usr/local/lib/android/sdk/ndk/"
           make android
       - name: Strip libs
         run: |
