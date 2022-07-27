@@ -32,6 +32,8 @@ jobs:
       - name: Build CCloader
         shell: bash
         run: |
+          mkdir -p build/x86/
+          mkdir -p build/x64/
           make windows
       - name: Artifact
         uses: actions/upload-artifact@v3
@@ -54,10 +56,14 @@ jobs:
         run: |
           rustup target add x86_64-unknown-linux-gnu
       - name: Build CC loader
+        shell: bash
         run: |
+          mkdir -p build/x64/
           make build/x64/CCloader.so
       - name: Strip
-        run: strip build/x64/CCloader.so
+        shell: bash
+        run: |
+          strip build/x64/CCloader.so
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -83,6 +89,8 @@ jobs:
       - name: Build CC loader
         run: |
           export ANDROID_NDK_HOME="/usr/local/lib/android/sdk/ndk/"
+          mkdir -p build/armeabi-v7a/
+          mkdir -p build/arm64-v8a/
           make android
       - name: Strip libs
         run: |
@@ -115,6 +123,9 @@ jobs:
       - name: Build CC loader
         shell: bash
         run: |
+          mkdir -p build/universal/
+          mkdir -p build/x64/
+          mkdir -p build/arm64/
           make build/universal/CCloader.dylib
       - name: Artifact
         uses: actions/upload-artifact@v3
@@ -144,6 +155,9 @@ jobs:
           aarch64-apple-ios
       - name: Build CC loader
         run: |
+          mkdir -p build/universal/
+          mkdir -p build/x64/
+          mkdir -p build/arm64/
           make build/universal/libCCloader.a
       - name: Artifact
         uses: actions/upload-artifact@v3
