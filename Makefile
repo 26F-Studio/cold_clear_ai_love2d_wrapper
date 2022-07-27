@@ -17,12 +17,12 @@ build/arm64-v8a/libCCloader.so: build/arm64-v8a/libcold_clear.so
 	cp libs/arm64-v8a/libCCloader.so build/arm64-v8a/libCCloader.so
 
 build/armeabi-v7a/libcold_clear.so:
-	cd cold-clear && cargo ndk --platform 21 build -p c-api --release --target=armv7-linux-android
+	cd cold-clear && cargo ndk --target=armv7-linux-android --platform 21 build -p c-api --release
 	mkdir -p build/armeabi-v7a/
         cp cold-clear/target/armv7-linux-android/release/libcold_clear.so build/armeabi-v7a/libcold_clear.so
 
 build/arm64-v8a/libcold_clear.so:
-	cd cold-clear && cargo ndk --platform 21 build -p c-api --release --target=aarch64-linux-android
+	cd cold-clear && cargo ndk --target=aarch64-linux-android --platform 21 build -p c-api --release
 	mkdir -p build/arm64-v8a/
         cp cold-clear/target/aarch64-linux-android/release/libcold_clear.so build/arm64-v8a/libcold_clear.so
 
