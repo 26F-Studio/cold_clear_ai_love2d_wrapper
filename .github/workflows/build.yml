@@ -107,6 +107,11 @@ jobs:
           wget https://github.com/love2d/love-apple-dependencies/raw/main/macOS/Frameworks/Lua.framework/Versions/A/Lua
           mkdir -p lib/universal/
           mv Lua lib/universal/libluajit.a
+      - name: Setup rust
+        run: |
+          rustup target add \
+          x86_64-apple-darwin \
+          aarch64-apple-darwin
       - name: Build CC loader
         shell: bash
         run: |
@@ -134,7 +139,9 @@ jobs:
           mv libluajit_device.a lib/arm64/libluajit.a
       - name: Setup rust
         run: |
-          rustup target add x86_64-apple-ios aarch64-apple-ios
+          rustup target add \
+          x86_64-apple-ios \
+          aarch64-apple-ios
       - name: Build CC loader
         run: |
           make build/universal/libCCloader.a

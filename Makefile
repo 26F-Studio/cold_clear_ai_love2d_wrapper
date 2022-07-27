@@ -67,8 +67,10 @@ build/universal/libCCloader.a: cold_clear_wrapper.c lib/x64/libluajit.a lib/arm6
 
 build/x64/libcold_clear.a:
 	cd cold-clear && cargo build -p c-api --release --target=x86_64-apple-ios
+	mkdir -p build/x64/
 	cp cold-clear/target/x86_64-apple-ios/release/libcold_clear.a build/x64/libcold_clear.a
 
 build/arm64/libcold_clear.a:
 	cd cold-clear && cargo build -p c-api --release --target=aarch64-apple-ios
+	mkdir -p build/arm64/
 	cp cold-clear/target/aarch64-apple-ios/release/libcold_clear.a build/arm64/libcold_clear.a
