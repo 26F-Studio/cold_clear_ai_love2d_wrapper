@@ -1,179 +1,142 @@
-name: CI
+name: Build CCloader
 
 on:
   push:
-    branches: [ master, ci* ]
+    branches: [main, ci*]
 
 jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
-    - name: Download love
-      run: |
-        curl -LO https://github.com/love2d/love/releases/download/11.3/love-11.3-win64.zip
-        curl -LO https://github.com/love2d/love/releases/download/11.3/love-11.3-win32.zip
-        7z x love-11.3-win64.zip
-        7z x love-11.3-win32.zip
-        copy love-11.3-win64/lua51.dll .
-        copy love-11.3-win32/lua51.dll x86
-    - name: Setup rust win32
-      run: rustup target add i686-pc-windows-msvc
-    - name: Setup tdmgcc
-      shell: cmd
-      run: |
-        curl -LO https://github.com/jmeubank/tdm-gcc/releases/download/v9.2.0-tdm64-1/tdm64-gcc-9.2.0.exe
-        7z x tdm64-gcc-9.2.0.exe
-        move $PLUGINSDIR tdmgcc
-        cd tdmgcc
-        7z x *.xz
-        7z x *.tar -y
-    - name: Build coldclear
-      run: |
-        cd cold-clear/c-api
-        cargo build --release
-        cargo build --release --target=i686-pc-windows-msvc
-        cd ../..
-        copy cold-clear/target/release/cold_clear.dll .
-        copy cold-clear/target/i686-pc-windows-msvc/release/cold_clear.dll x86
-    - name: Build ccloader
-      shell: cmd
-      run: |
-        set PATH=%GITHUB_WORKSPACE%\tdmgcc\bin;%PATH%
-        mingw32-make
-        mingw32-make x86/CCloader.dll
-    - name: Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: win64
-        path: |
-          CCloader.dll
-          cold_clear.dll
-    - name: Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: win32
-        path: |
-          x86/CCloader.dll
-          x86/cold_clear.dll
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: MinoruSekine/setup-scoop@v1
+      - name: Install packages
+        shell: bash
+        run: |
+          scoop install make gcc
+      - name: Download love
+        shell: bash
+        run: |
+          curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip
+          7z e love-11.4-win64.zip lua51.dll -r -olibs/x64
+          curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip
+          7z e love-11.4-win32.zip lua51.dll -r -olibs/x86
+      - name: Setup rust targets
+        shell: bash
+        run: |
+          rustup target add \
+          x86_64-pc-windows-msvc \
+          i686-pc-windows-msvc
+      - name: Build CCloader
+        shell: bash
+        run: |
+          make windows
+      - name: Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows
+          path: build
 
   build-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
-    - name: Setup
-      run: sudo apt install love
-    - name: Build
-      run: make CCloader.so
-    - name: Strip
-      run: strip libcold_clear.so
-    - name: Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: linux
-        path: |
-          libcold_clear.so
-          CCloader.so
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install love-11.4
+        shell: bash
+        run: |
+          sudo apt install love
+      - name: Setup rust targets
+        shell: bash
+        run: |
+          rustup target add x86_64-unknown-linux-gnu
+      - name: Build CC loader
+        run: |
+          make linux
+      - name: Strip
+        run: strip build/x64/CCloader.so
+      - name: Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux
+          path: build
 
   build-android:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    env:
+      LOVE_HOME: love
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
-    - name: Download love
-      run: |
-        curl -LO https://github.com/love2d/love/releases/download/11.3/love-11.3-android.apk
-        7z x love-11.3-android.apk -olove-11.3-android
-    - name: Setup rust
-      run: |
-        cargo install cargo-ndk
-        rustup target add aarch64-linux-android armv7-linux-androideabi
-    - name: Build coldclear
-      run: |
-        export NDK_HOME="${ANDROID_NDK_HOME}"
-        cd cold-clear/c-api
-        cargo ndk --platform 21 --target armv7-linux-androideabi build --release
-        cargo ndk --platform 21 --target aarch64-linux-android build --release
-    - name: Build ccloader
-      run: |
-        export PATH="${ANDROID_NDK_HOME}:$PATH"
-        cp cold-clear/target/armv7-linux-androideabi/release/libcold_clear.so ./love-11.3-android/lib/armeabi-v7a
-        cp cold-clear/target/aarch64-linux-android/release/libcold_clear.so ./love-11.3-android/lib/arm64-v8a
-        ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=./love-11.3-android/lib
-    - name: Strip
-      run: |
-        export PATH="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin:$PATH"
-        strip love-11.3-android/lib/armeabi-v7a/libcold_clear.so
-        strip love-11.3-android/lib/arm64-v8a/libcold_clear.so
-    - name: Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: android_armv7
-        path: |
-          love-11.3-android/lib/armeabi-v7a/libcold_clear.so
-          libs/armeabi-v7a/libCCloader.so
-    - name: Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: android_aarch64
-        path: |
-          love-11.3-android/lib/arm64-v8a/libcold_clear.so
-          libs/arm64-v8a/libCCloader.so
-
-  build-macOS:
-    runs-on: macos-11
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
-    - name: Download love
-      run: |
-        curl -LO https://github.com/love2d/love/releases/download/11.3/love-11.3-macos.zip
-        7z e love-11.3-macos.zip love.app/Contents/Frameworks/Lua.framework/Versions/A/Lua
-        mv Lua libluajit.a
-    - name: Build CCloader
-      run: make CCloader.dylib
-    - name: Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: macOS
-        path: |
-          libcold_clear.a
-          CCloader.dylib
-
-  build-iOS:
-      runs-on: macos-11
-      steps:
       - uses: actions/checkout@v2
         with:
           submodules: true
-      - name: Install cargo-lipo
+      - name: Download love
         run: |
-          cargo install cargo-lipo
-      - name: Add toolchains
+          curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-android.apk
+          7z x love-11.4-android.apk -o${{ env.LOVE_HOME }}
+      - name: Setup rust
         run: |
-          rustup target add aarch64-apple-ios x86_64-apple-ios
-      - name: Build Cold Clear
+          cargo install cargo-ndk
+          rustup target add aarch64-linux-android armv7-linux-androideabi
+      - name: Build CC loader
         run: |
-          cd cold-clear
-          cargo lipo --release -p c-api
-          mv target/universal/release/libcold_clear.a ../lib/
-      - name: CMake and build CCloader
+          # export PATH="${ANDROID_NDK_HOME}:$PATH"
+          make android
+      - name: Strip libs
         run: |
-          ./MacReleaseIOS.sh
-      - name: Move library
-        run: |
-          mv cmake-build-release-ios/CCloader/lib/libCCloader.a libCCloader.a
-          mv lib/libcold_clear.a libcold_clear.a
+          export PATH="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin:$PATH"
+          strip build/armeabi-v7a/libcold_clear.so
+          strip build/arm64-v8a/libcold_clear.so
       - name: Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
+        with:
+          name: android
+          path: build
+
+  build-macOS:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Get Luajit
+        shell: bash
+        run: |
+          wget https://github.com/love2d/love-apple-dependencies/raw/main/macOS/Frameworks/Lua.framework/Versions/A/Lua
+          mv Lua lib/universal/libluajit.a
+      - name: Build CC loader
+        shell: bash
+        run: |
+          make build/universal/CCloader.dylib
+      - name: Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: macOS
+          path: build
+
+  build-iOS:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Get Luajit
+        shell: bash
+        run: |
+          wget https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64_x86_64-simulator/libluajit_sim.a
+          mv libluajit_device.a lib/x64/libluajit.a
+          wget https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a
+          mv libluajit_device.a lib/arm64/libluajit.a
+      - name: Setup rust
+        run: |
+          rustup target add x86_64-apple-ios aarch64-apple-ios
+      - name: Build CC loader
+        run: |
+          make build/universal/libCCloader.a
+      - name: Artifact
+        uses: actions/upload-artifact@v3
         with:
           name: iOS
-          path: |
-            libCCloader.a
-            libcold_clear.a
+          path: build
