@@ -128,7 +128,7 @@ jobs:
         run: |
           wget https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64_x86_64-simulator/libluajit_sim.a
           mkdir -p lib/x64/
-          mv libluajit_device.a lib/x64/libluajit.a
+          mv libluajit_sim.a lib/x64/libluajit.a
           wget https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a
           mkdir -p lib/arm64/
           mv libluajit_device.a lib/arm64/libluajit.a
