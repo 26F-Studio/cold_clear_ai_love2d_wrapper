@@ -55,7 +55,7 @@ jobs:
           rustup target add x86_64-unknown-linux-gnu
       - name: Build CC loader
         run: |
-          make linux
+          make build/x64/CCloader.so
       - name: Strip
         run: strip build/x64/CCloader.so
       - name: Artifact
