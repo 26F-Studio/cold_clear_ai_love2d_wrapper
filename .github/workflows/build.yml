@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - uses: MinoruSekine/setup-scoop@v1
+      - uses: MinoruSekine/setup-scoop@main
       - name: Install packages
         shell: bash
         run: |
@@ -20,9 +20,9 @@ jobs:
         shell: bash
         run: |
           curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip
-          7z e love-11.4-win64.zip lua51.dll -r -olibs/x64
+          7z e love-11.4-win64.zip lua51.dll -r -olib/x64
           curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip
-          7z e love-11.4-win32.zip lua51.dll -r -olibs/x86
+          7z e love-11.4-win32.zip lua51.dll -r -olib/x86
       - name: Setup rust targets
         shell: bash
         run: |
@@ -105,6 +105,7 @@ jobs:
         shell: bash
         run: |
           wget https://github.com/love2d/love-apple-dependencies/raw/main/macOS/Frameworks/Lua.framework/Versions/A/Lua
+          mkdir -p lib/universal/
           mv Lua lib/universal/libluajit.a
       - name: Build CC loader
         shell: bash
@@ -126,8 +127,10 @@ jobs:
         shell: bash
         run: |
           wget https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64_x86_64-simulator/libluajit_sim.a
+          mkdir -p lib/x64/
           mv libluajit_device.a lib/x64/libluajit.a
           wget https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a
+          mkdir -p lib/arm64/
           mv libluajit_device.a lib/arm64/libluajit.a
       - name: Setup rust
         run: |
