@@ -18,7 +18,8 @@ build/arm64-v8a/libCCloader.so: build/arm64-v8a/libcold_clear.so
 
 build/armeabi-v7a/libcold_clear.so:
 	cd cold-clear && cargo ndk -t armeabi-v7a --platform 21 build -p c-api --release
-	mkdir -p build/armeabi-v7a/ && cp cold-clear/target/armv7-linux-android/release/libcold_clear.so build/armeabi-v7a/libcold_clear.so
+	ls -l cold-clear/target/
+	mkdir -p build/armeabi-v7a/ && cp cold-clear/target/armv7-linux-androideabi/release/libcold_clear.so build/armeabi-v7a/libcold_clear.so
 
 build/arm64-v8a/libcold_clear.so:
 	cd cold-clear && cargo ndk -t arm64-v8a --platform 21 build -p c-api --release
@@ -60,14 +61,8 @@ build/universal/libcold_clear.a:
 	mkdir -p build/universal/ && lipo -create cold-clear/target/x86_64-apple-darwin/release/libcold_clear.a cold-clear/target/aarch64-apple-darwin/release/libcold_clear.a -output build/universal/libcold_clear.a
 
 # iOS build
-build/universal/libCCloader.a: cold_clear_wrapper.c lib/x64/libluajit.a lib/arm64/libluajit.a build/x64/libcold_clear.a build/arm64/libcold_clear.a
-	$(CC) $(CFLAGS) -target x86_64-apple-ios-simulator -shared cold_clear_wrapper.c lib/x64/libluajit.a build/x64/libcold_clear.a -o build/x64/libCCloader.a
-	$(CC) $(CFLAGS) -target arm64-apple-ios -shared cold_clear_wrapper.c lib/arm64/libluajit.a build/arm64/libcold_clear.a -o build/arm64/libCCloader.a
-	mkdir -p build/universal/ && lipo -create build/x64/libCCloader.a build/arm64/libCCloader.a -output build/universal/libCCloader.a
-
-build/x64/libcold_clear.a:
-	cd cold-clear && cargo build -p c-api --release --target=x86_64-apple-ios
-	mkdir -p build/x64/ && cp cold-clear/target/x86_64-apple-ios/release/libcold_clear.a build/x64/libcold_clear.a
+build/arm64/libCCloader.a: cold_clear_wrapper.c lib/arm64/libluajit.a build/arm64/libcold_clear.a
+	$(CC) $(CFLAGS) -target arm64-apple-ios -framework Security -shared cold_clear_wrapper.c lib/arm64/libluajit.a build/arm64/libcold_clear.a -o build/arm64/libCCloader.a
 
 build/arm64/libcold_clear.a:
 	cd cold-clear && cargo build -p c-api --release --target=aarch64-apple-ios
