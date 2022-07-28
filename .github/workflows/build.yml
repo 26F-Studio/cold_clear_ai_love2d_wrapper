@@ -128,7 +128,7 @@ jobs:
         run: |
           curl -LO --retry 5 https://github.com/love2d/love/releases/download/11.3/love-11.3-macos.zip
           7z e love-11.3-macos.zip love.app/Contents/Frameworks/Lua.framework/Versions/A/Lua
-          mkdir -p lib/x64/ && lib/x64/libluajit.a
+          mkdir -p lib/x64/ && mv Lua lib/x64/libluajit.a
       - name: Setup rust
         run: |
           rustup target add x86_64-apple-darwin
