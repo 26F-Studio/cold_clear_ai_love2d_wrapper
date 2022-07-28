@@ -1,9 +1,6 @@
 CC=gcc
 CFLAGS=-I./include -I./cold-clear/c-api -O2 -DNDEBUG
 LOVE_HOME=love
-NDK_PROJECT_PATH=.
-NDK_APPLICATION_MK=Application.mk
-APP_BUILD_SCRIPT=Android.mk
 
 # Android build
 android: build/armeabi-v7a/libCCloader.so build/arm64-v8a/libCCloader.so
@@ -11,12 +8,12 @@ android: build/armeabi-v7a/libCCloader.so build/arm64-v8a/libCCloader.so
 
 build/armeabi-v7a/libCCloader.so: build/armeabi-v7a/libcold_clear.so
 	cp build/armeabi-v7a/libcold_clear.so $(LOVE_HOME)/lib/armeabi-v7a/
-	ndk-build LOVE2D_LIB=$(LOVE_HOME)/lib
+	ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=$(LOVE_HOME)/lib
 	cp libs/armeabi-v7a/libCCloader.so build/armeabi-v7a/libCCloader.so
 
 build/arm64-v8a/libCCloader.so: build/arm64-v8a/libcold_clear.so
 	cp build/arm64-v8a/libcold_clear.so $(LOVE_HOME)/lib/arm64-v8a/
-	ndk-build LOVE2D_LIB=$(LOVE_HOME)/lib
+	ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=$(LOVE_HOME)/lib
 	cp libs/arm64-v8a/libCCloader.so build/arm64-v8a/libCCloader.so
 
 build/armeabi-v7a/libcold_clear.so:
