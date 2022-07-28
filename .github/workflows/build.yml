@@ -30,15 +30,14 @@ jobs:
           make android
       - name: Strip libs
         run: |
-          ls -l ${ANDROID_NDK_LATEST_HOME}
-          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains
-          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm
-          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/
-          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64
-          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/
-          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin
-          ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/strip build/armeabi-v7a/libcold_clear.so
-          ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/strip build/arm64-v8a/libcold_clear.so
+          ls -l /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/aarch64-linux-android-4.9
+          ls -l /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/arm-linux-androideabi-4.9
+          ls -l /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/x86_64-4.9
+          ls -l /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/linux-x86_64
+          ls -l /usr/local/lib/android/sdk/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64
+          ls -l /usr/local/lib/android/sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/linux-x86_64
+          /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/strip build/armeabi-v7a/libcold_clear.so
+          /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/strip build/arm64-v8a/libcold_clear.so
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
