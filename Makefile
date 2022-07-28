@@ -33,21 +33,20 @@ build/arm64/libcold_clear.a:
 	mkdir -p build/arm64/ && cp cold-clear/target/aarch64-apple-ios/release/libcold_clear.a build/arm64/libcold_clear.a
 
 # Linux build
-build/x64/CCloader.so: cold_clear_wrapper.c /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 build/x64/libcold_clear.so
-	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c build/x64/libcold_clear.so /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 -o build/x64/CCloader.so
+build/x64/CCloader.so: cold_clear_wrapper.c lib/x64/libluajit.so build/x64/libcold_clear.so
+	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c lib/x64/libluajit.so build/x64/libcold_clear.so -o build/x64/CCloader.so
 
 build/x64/libcold_clear.so:
 	cd cold-clear && cargo build -p c-api --release --target=x86_64-unknown-linux-gnu
 	mkdir -p build/x64/ && cp cold-clear/target/x86_64-unknown-linux-gnu/release/libcold_clear.so build/x64/libcold_clear.so
 
 # macOS build
-build/universal/CCloader.dylib: cold_clear_wrapper.c lib/universal/libluajit.a build/universal/libcold_clear.a
-	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c lib/universal/libluajit.a build/universal/libcold_clear.a -o build/universal/CCloader.dylib
+build/x64/CCloader.dylib: cold_clear_wrapper.c lib/x64/libluajit.a build/x64/libcold_clear.a
+	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c lib/x64/libluajit.a build/x64/libcold_clear.a -o build/x64/CCloader.dylib
 
-build/universal/libcold_clear.a:
+build/x64/libcold_clear.a:
 	cd cold-clear && cargo build -p c-api --release --target=x86_64-apple-darwin
-	cd cold-clear && cargo build -p c-api --release --target=aarch64-apple-darwin
-	mkdir -p build/universal/ && lipo -create cold-clear/target/x86_64-apple-darwin/release/libcold_clear.a cold-clear/target/aarch64-apple-darwin/release/libcold_clear.a -output build/universal/libcold_clear.a
+	mkdir -p build/universal/ && cp cold-clear/target/x86_64-apple-darwin/release/libcold_clear.a build/x64/libcold_clear.a
 
 # Windows build
 windows: build/x86/CCloader.dll build/x64/CCloader.dll
