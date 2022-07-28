@@ -58,7 +58,7 @@ jobs:
       - name: Get Luajit
         shell: bash
         run: |
-          curl -LO --retry 5  https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a
+          curl -LO --retry 5 https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a
           mkdir -p lib/arm64/ && mv libluajit_device.a lib/arm64/libluajit.a
       - name: Setup rust
         run: rustup target add aarch64-apple-ios
@@ -123,7 +123,7 @@ jobs:
       - name: Get Luajit
         shell: bash
         run: |
-          curl -LO --retry 5  https://github.com/love2d/love-apple-dependencies/raw/main/macOS/Frameworks/Lua.framework/Versions/A/Lua
+          curl -LO --retry 5 https://github.com/love2d/love-apple-dependencies/raw/main/macOS/Frameworks/Lua.framework/Versions/A/Lua
           mkdir -p lib/universal/ && mv Lua lib/universal/libluajit.a
       - name: Setup rust
         run: |

@@ -42,7 +42,9 @@ build/x64/libcold_clear.so:
 
 # macOS build
 build/universal/CCloader.dylib: cold_clear_wrapper.c lib/universal/libluajit.a build/universal/libcold_clear.a
-	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c lib/universal/libluajit.a build/universal/libcold_clear.a -o build/universal/CCloader.dylib
+	$(CC) $(CFLAGS) -target x86_64-apple-macos -shared cold_clear_wrapper.c lib/universal/libluajit.a build/universal/libcold_clear.a -o CCloader_x64.dylib
+	$(CC) $(CFLAGS) -target aarch64-apple-macos -shared cold_clear_wrapper.c lib/universal/libluajit.a build/universal/libcold_clear.a -o CCloader_arm64.dylib
+	lipo -create CCloader_x64.dylib CCloader_arm64.dylib -output build/universal/CCloader.dylib
 
 build/universal/libcold_clear.a:
 	cd cold-clear && cargo build -p c-api --release --target=x86_64-apple-darwin
