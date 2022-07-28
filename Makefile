@@ -46,7 +46,7 @@ build/x64/CCloader.dylib: cold_clear_wrapper.c lib/x64/libluajit.a build/x64/lib
 
 build/x64/libcold_clear.a:
 	cd cold-clear && cargo build -p c-api --release --target=x86_64-apple-darwin
-	mkdir -p build/universal/ && cp cold-clear/target/x86_64-apple-darwin/release/libcold_clear.a build/x64/libcold_clear.a
+	mkdir -p build/x64/ && cp cold-clear/target/x86_64-apple-darwin/release/libcold_clear.a build/x64/libcold_clear.a
 
 # Windows build
 windows: build/x86/CCloader.dll build/x64/CCloader.dll
