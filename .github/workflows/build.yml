@@ -14,15 +14,14 @@ jobs:
       - uses: MinoruSekine/setup-scoop@main
       - name: Install packages
         shell: bash
-        run: |
-          scoop install make gcc
+        run: scoop install make gcc
       - name: Download love
         shell: bash
         run: |
           curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip
-          7z e love-11.4-win64.zip lua51.dll -r -olib/x64
+          mkdir -p lib/x64/ && 7z e love-11.4-win64.zip lua51.dll -r -olib/x64/
           curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip
-          7z e love-11.4-win32.zip lua51.dll -r -olib/x86
+          mkdir -p lib/x86/ && 7z e love-11.4-win32.zip lua51.dll -r -olib/x86/
       - name: Setup rust targets
         shell: bash
         run: |
@@ -31,10 +30,7 @@ jobs:
           i686-pc-windows-msvc
       - name: Build CCloader
         shell: bash
-        run: |
-          mkdir -p build/x86/
-          mkdir -p build/x64/
-          make windows
+        run: make windows
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -49,21 +45,16 @@ jobs:
           submodules: true
       - name: Install love-11.4
         shell: bash
-        run: |
-          sudo apt install love
+        run: sudo apt install love
       - name: Setup rust targets
         shell: bash
-        run: |
-          rustup target add x86_64-unknown-linux-gnu
+        run: rustup target add x86_64-unknown-linux-gnu
       - name: Build CC loader
         shell: bash
-        run: |
-          mkdir -p build/x64/
-          make build/x64/CCloader.so
-      - name: Strip
+        run: make build/x64/CCloader.so
+      - name: Strip libs
         shell: bash
-        run: |
-          strip build/x64/CCloader.so
+        run: strip build/x64/CCloader.so
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -89,8 +80,6 @@ jobs:
       - name: Build CC loader
         run: |
           export ANDROID_NDK_HOME="/usr/local/lib/android/sdk/ndk/"
-          mkdir -p build/armeabi-v7a/
-          mkdir -p build/arm64-v8a/
           make android
       - name: Strip libs
         run: |
@@ -113,8 +102,7 @@ jobs:
         shell: bash
         run: |
           wget https://github.com/love2d/love-apple-dependencies/raw/main/macOS/Frameworks/Lua.framework/Versions/A/Lua
-          mkdir -p lib/universal/
-          mv Lua lib/universal/libluajit.a
+          mkdir -p lib/universal/ && mv Lua lib/universal/libluajit.a
       - name: Setup rust
         run: |
           rustup target add \
@@ -122,11 +110,7 @@ jobs:
           aarch64-apple-darwin
       - name: Build CC loader
         shell: bash
-        run: |
-          mkdir -p build/universal/
-          mkdir -p build/x64/
-          mkdir -p build/arm64/
-          make build/universal/CCloader.dylib
+        run: make build/universal/CCloader.dylib
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -143,22 +127,16 @@ jobs:
         shell: bash
         run: |
           wget https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64_x86_64-simulator/libluajit_sim.a
-          mkdir -p lib/x64/
-          mv libluajit_sim.a lib/x64/libluajit.a
+          mkdir -p lib/x64/ && mv libluajit_sim.a lib/x64/libluajit.a
           wget https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a
-          mkdir -p lib/arm64/
-          mv libluajit_device.a lib/arm64/libluajit.a
+          mkdir -p lib/arm64/ && mv libluajit_device.a lib/arm64/libluajit.a
       - name: Setup rust
         run: |
           rustup target add \
           x86_64-apple-ios \
           aarch64-apple-ios
       - name: Build CC loader
-        run: |
-          mkdir -p build/universal/
-          mkdir -p build/x64/
-          mkdir -p build/arm64/
-          make build/universal/libCCloader.a
+        run: make build/universal/libCCloader.a
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
