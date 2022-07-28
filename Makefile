@@ -8,12 +8,12 @@ android: build/armeabi-v7a/libCCloader.so build/arm64-v8a/libCCloader.so
 
 build/armeabi-v7a/libCCloader.so: build/armeabi-v7a/libcold_clear.so
 	cp build/armeabi-v7a/libcold_clear.so $(LOVE_HOME)/lib/armeabi-v7a/
-	ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=$(LOVE_HOME)/lib
+	ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=$(LOVE_HOME)/lib APP_ABI=armeabi-v7a
 	cp libs/armeabi-v7a/libCCloader.so build/armeabi-v7a/libCCloader.so
 
 build/arm64-v8a/libCCloader.so: build/arm64-v8a/libcold_clear.so
 	cp build/arm64-v8a/libcold_clear.so $(LOVE_HOME)/lib/arm64-v8a/
-	ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=$(LOVE_HOME)/lib
+	ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=$(LOVE_HOME)/lib APP_ABI=arm64-v8a
 	cp libs/arm64-v8a/libCCloader.so build/arm64-v8a/libCCloader.so
 
 build/armeabi-v7a/libcold_clear.so:
