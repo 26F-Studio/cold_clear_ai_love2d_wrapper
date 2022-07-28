@@ -30,6 +30,13 @@ jobs:
           make android
       - name: Strip libs
         run: |
+          ls -l ${ANDROID_NDK_LATEST_HOME}
+          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains
+          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm
+          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/
+          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64
+          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/
+          ls -l ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin
           ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/strip build/armeabi-v7a/libcold_clear.so
           ${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/strip build/arm64-v8a/libcold_clear.so
       - name: Artifact
