@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, ci*]
     tags: 
-      - 'v*'
+      - '*'
 
 jobs:
   build-android:
@@ -36,15 +36,15 @@ jobs:
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: android
+          name: Android
           path: build
       - name: Pack build folder
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
           7z a -tzip Android.zip build/*
       - name: Create release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: Android.zip
@@ -70,12 +70,12 @@ jobs:
           name: iOS
           path: build
       - name: Pack build folder
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
           7z a -tzip iOS.zip build/*
       - name: Create release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: iOS.zip
@@ -101,15 +101,15 @@ jobs:
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: linux
+          name: Linux
           path: build
       - name: Pack build folder
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
           7z a -tzip Linux.zip build/*
       - name: Create release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: Linux.zip
@@ -139,12 +139,12 @@ jobs:
           name: macOS
           path: build
       - name: Pack build folder
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
           7z a -tzip macOS.zip build/*
       - name: Create release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: macOS.zip
@@ -184,15 +184,15 @@ jobs:
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: windows
+          name: Windows
           path: build
       - name: Pack build folder
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
           7z a -tzip Windows.zip build/*
       - name: Create release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: Windows.zip
