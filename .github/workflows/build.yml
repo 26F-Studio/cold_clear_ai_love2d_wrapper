@@ -5,40 +5,57 @@ on:
     branches: [main, ci*]
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
+  build-android:
+    runs-on: ubuntu-latest
+    env:
+      LOVE_HOME: love
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Download love
+        run: |
+          curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-android.apk
+          7z x love-11.4-android.apk -o${{ env.LOVE_HOME }}
+      - name: Setup rust
+        run: |
+          cargo install cargo-ndk
+          rustup target add aarch64-linux-android armv7-linux-androideabi
+      - name: Build CC loader
+        run: |
+          export ANDROID_NDK_HOME=${ANDROID_NDK_LATEST_HOME}
+          export PATH="${ANDROID_NDK_HOME}:$PATH"
+          make android
+      - name: Strip libs
+        run: |
+          export PATH="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin:$PATH"
+          strip build/armeabi-v7a/libcold_clear.so
+          strip build/arm64-v8a/libcold_clear.so
+      - name: Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: android
+          path: build
+
+  build-iOS:
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - uses: MinoruSekine/setup-scoop@main
-      - name: Install packages
-        shell: bash
-        run: scoop install make gcc
-      - name: Download love
+      - name: Get Luajit
         shell: bash
         run: |
-          curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip
-          mkdir -p lib/x64/ && 7z e love-11.4-win64.zip lua51.dll -r -olib/x64/
-          curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip
-          mkdir -p lib/x86/ && 7z e love-11.4-win32.zip lua51.dll -r -olib/x86/
-      - name: Setup rust targets
-        shell: bash
-        run: |
-          rustup target add \
-          x86_64-pc-windows-msvc \
-          i686-pc-windows-msvc
-      - name: Build CCloader
-        shell: bash
-        run: |
-          ls -l /c/Users/runneradmin/scoop/apps/gcc/current/bin/
-          export PATH="/c/Users/runneradmin/scoop/apps/gcc/current/bin/:$PATH"
-          echo $PATH
-          make windows
+          wget https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a
+          mkdir -p lib/arm64/ && mv libluajit_device.a lib/arm64/libluajit.a
+      - name: Setup rust
+        run: rustup target add aarch64-apple-ios
+      - name: Build CC loader
+        run: make build/arm64/libCCloader.a
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: windows
+          name: iOS
           path: build
 
   build-linux:
@@ -63,39 +80,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: linux
-          path: build
-
-  build-android:
-    runs-on: ubuntu-latest
-    env:
-      LOVE_HOME: love
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-      - name: Download love
-        run: |
-          curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-android.apk
-          7z x love-11.4-android.apk -o${{ env.LOVE_HOME }}
-      - name: Setup rust
-        run: |
-          cargo install cargo-ndk
-          rustup target add aarch64-linux-android armv7-linux-androideabi
-      - name: Setup NDK
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r21e
-      - name: Build CC loader
-        run: make android
-      - name: Strip libs
-        run: |
-          export PATH="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin:$PATH"
-          strip build/armeabi-v7a/libcold_clear.so
-          strip build/arm64-v8a/libcold_clear.so
-      - name: Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: android
           path: build
 
   build-macOS:
@@ -123,23 +107,40 @@ jobs:
           name: macOS
           path: build
 
-  build-iOS:
-    runs-on: macos-latest
+  build-windows:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - name: Get Luajit
+      - uses: MinoruSekine/setup-scoop@main
+      - name: Install packages
         shell: bash
         run: |
-          wget https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a
-          mkdir -p lib/arm64/ && mv libluajit_device.a lib/arm64/libluajit.a
-      - name: Setup rust
-        run: rustup target add aarch64-apple-ios
-      - name: Build CC loader
-        run: make build/arm64/libCCloader.a
+          scoop bucket add versions
+          scoop install make tdm-gcc
+      - name: Download love
+        shell: bash
+        run: |
+          curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip
+          mkdir -p lib/x64/ && 7z e love-11.4-win64.zip lua51.dll -r -olib/x64/
+          curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip
+          mkdir -p lib/x86/ && 7z e love-11.4-win32.zip lua51.dll -r -olib/x86/
+      - name: Setup rust targets
+        shell: bash
+        run: |
+          rustup target add \
+          x86_64-pc-windows-msvc \
+          i686-pc-windows-msvc
+      - name: Build CCloader
+        shell: bash
+        run: |
+          ls -l /c/Users/runneradmin/scoop/apps/tdm-gcc/current/bin/
+          export PATH="/c/Users/runneradmin/scoop/apps/tdm-gcc/current/bin/:$PATH"
+          echo $PATH
+          make windows
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: iOS
+          name: windows
           path: build

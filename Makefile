@@ -25,23 +25,13 @@ build/arm64-v8a/libcold_clear.so:
 	cd cold-clear && cargo ndk -t arm64-v8a --platform 24 build -p c-api --release
 	mkdir -p build/arm64-v8a/ && cp cold-clear/target/aarch64-linux-android/release/libcold_clear.so build/arm64-v8a/libcold_clear.so
 
-# Windows build
-windows: build/x86/CCloader.dll build/x64/CCloader.dll
-	echo "Targets built: build/x86/CCloader.dll build/x64/CCloader.dll"
+# iOS build
+build/arm64/libCCloader.a: cold_clear_wrapper.c lib/arm64/libluajit.a build/arm64/libcold_clear.a
+	$(CC) $(CFLAGS) -target arm64-apple-ios -framework Security -shared cold_clear_wrapper.c lib/arm64/libluajit.a build/arm64/libcold_clear.a -o build/arm64/libCCloader.a
 
-build/x86/CCloader.dll: cold_clear_wrapper.c lib/x86/lua51.dll build/x86/cold_clear.dll
-	$(CC) $(CFLAGS) -s -m32 -shared cold_clear_wrapper.c build/x86/cold_clear.dll lib/x86/lua51.dll -o build/x86/CCloader.dll
-
-build/x64/CCloader.dll: cold_clear_wrapper.c lib/x64/lua51.dll build/x64/cold_clear.dll
-	$(CC) $(CFLAGS) -s -shared cold_clear_wrapper.c build/x64/cold_clear.dll lib/x64/lua51.dll -o build/x64/CCloader.dll
-
-build/x86/cold_clear.dll:
-	cd cold-clear && cargo build -p c-api --release --target=i686-pc-windows-msvc
-	mkdir -p build/x86/ && cp cold-clear/target/i686-pc-windows-msvc/release/cold_clear.dll build/x86/cold_clear.dll
-
-build/x64/cold_clear.dll:
-	cd cold-clear && cargo build -p c-api --release --target=x86_64-pc-windows-msvc
-	mkdir -p build/x64/ && cp cold-clear/target/x86_64-pc-windows-msvc/release/cold_clear.dll build/x64/cold_clear.dll
+build/arm64/libcold_clear.a:
+	cd cold-clear && cargo build -p c-api --release --target=aarch64-apple-ios
+	mkdir -p build/arm64/ && cp cold-clear/target/aarch64-apple-ios/release/libcold_clear.a build/arm64/libcold_clear.a
 
 # Linux build
 build/x64/CCloader.so: cold_clear_wrapper.c /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 build/x64/libcold_clear.so
@@ -60,10 +50,20 @@ build/universal/libcold_clear.a:
 	cd cold-clear && cargo build -p c-api --release --target=aarch64-apple-darwin
 	mkdir -p build/universal/ && lipo -create cold-clear/target/x86_64-apple-darwin/release/libcold_clear.a cold-clear/target/aarch64-apple-darwin/release/libcold_clear.a -output build/universal/libcold_clear.a
 
-# iOS build
-build/arm64/libCCloader.a: cold_clear_wrapper.c lib/arm64/libluajit.a build/arm64/libcold_clear.a
-	$(CC) $(CFLAGS) -target arm64-apple-ios -framework Security -shared cold_clear_wrapper.c lib/arm64/libluajit.a build/arm64/libcold_clear.a -o build/arm64/libCCloader.a
+# Windows build
+windows: build/x86/CCloader.dll build/x64/CCloader.dll
+	echo "Targets built: build/x86/CCloader.dll build/x64/CCloader.dll"
 
-build/arm64/libcold_clear.a:
-	cd cold-clear && cargo build -p c-api --release --target=aarch64-apple-ios
-	mkdir -p build/arm64/ && cp cold-clear/target/aarch64-apple-ios/release/libcold_clear.a build/arm64/libcold_clear.a
+build/x86/CCloader.dll: cold_clear_wrapper.c lib/x86/lua51.dll build/x86/cold_clear.dll
+	$(CC) $(CFLAGS) -s -m32 -shared cold_clear_wrapper.c build/x86/cold_clear.dll lib/x86/lua51.dll -o build/x86/CCloader.dll
+
+build/x64/CCloader.dll: cold_clear_wrapper.c lib/x64/lua51.dll build/x64/cold_clear.dll
+	$(CC) $(CFLAGS) -s -shared cold_clear_wrapper.c build/x64/cold_clear.dll lib/x64/lua51.dll -o build/x64/CCloader.dll
+
+build/x86/cold_clear.dll:
+	cd cold-clear && cargo build -p c-api --release --target=i686-pc-windows-msvc
+	mkdir -p build/x86/ && cp cold-clear/target/i686-pc-windows-msvc/release/cold_clear.dll build/x86/cold_clear.dll
+
+build/x64/cold_clear.dll:
+	cd cold-clear && cargo build -p c-api --release --target=x86_64-pc-windows-msvc
+	mkdir -p build/x64/ && cp cold-clear/target/x86_64-pc-windows-msvc/release/cold_clear.dll build/x64/cold_clear.dll
