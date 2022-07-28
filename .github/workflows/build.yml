@@ -3,6 +3,8 @@ name: Build CCloader
 on:
   push:
     branches: [main, ci*]
+    tags: 
+      - 'v*'
 
 jobs:
   build-android:
@@ -36,6 +38,16 @@ jobs:
         with:
           name: android
           path: build
+      - name: Pack build folder
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          7z a -tzip Android.zip build/*
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: Android.zip
 
   build-iOS:
     runs-on: macos-latest
@@ -57,6 +69,16 @@ jobs:
         with:
           name: iOS
           path: build
+      - name: Pack build folder
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          7z a -tzip iOS.zip build/*
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: iOS.zip
 
   build-linux:
     runs-on: ubuntu-latest
@@ -81,6 +103,16 @@ jobs:
         with:
           name: linux
           path: build
+      - name: Pack build folder
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          7z a -tzip Linux.zip build/*
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: Linux.zip
 
   build-macOS:
     runs-on: macos-latest
@@ -106,6 +138,16 @@ jobs:
         with:
           name: macOS
           path: build
+      - name: Pack build folder
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          7z a -tzip macOS.zip build/*
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: macOS.zip
 
   build-windows:
     runs-on: windows-latest
@@ -144,3 +186,13 @@ jobs:
         with:
           name: windows
           path: build
+      - name: Pack build folder
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          7z a -tzip Windows.zip build/*
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: Windows.zip
