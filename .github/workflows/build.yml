@@ -20,7 +20,6 @@ jobs:
         run: |
           curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip
           mkdir -p lib/x64/ && 7z e love-11.4-win64.zip lua51.dll -r -olib/x64/
-          pexports lua51.dll > lua51.lib /def:lua51.def /machine:x64
           curl -LO https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip
           mkdir -p lib/x86/ && 7z e love-11.4-win32.zip lua51.dll -r -olib/x86/
       - name: Setup rust targets
@@ -83,6 +82,7 @@ jobs:
           rustup target add aarch64-linux-android armv7-linux-androideabi
       - name: Build CC loader
         run: |
+          export ANDROID_NDK_HOME="/usr/local/lib/android/sdk/ndk/"
           export PATH="${ANDROID_NDK_HOME}:$PATH"
           make android
       - name: Strip libs
