@@ -31,7 +31,8 @@ jobs:
       - name: Build CCloader
         shell: bash
         run: |
-          export PATH="~/scoop/apps/gcc/current/bin/:$PATH"
+          ls -l /c/Users/runneradmin/scoop/apps/gcc/current/bin/
+          export PATH="/c/Users/runneradmin/scoop/apps/gcc/current/bin/:$PATH"
           echo $PATH
           make windows
       - name: Artifact
@@ -80,11 +81,12 @@ jobs:
         run: |
           cargo install cargo-ndk
           rustup target add aarch64-linux-android armv7-linux-androideabi
+      - name: Setup NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r21e
       - name: Build CC loader
-        run: |
-          export ANDROID_NDK_HOME="/usr/local/lib/android/sdk/ndk/"
-          export PATH="${ANDROID_NDK_HOME}:$PATH"
-          make android
+        run: make android
       - name: Strip libs
         run: |
           export PATH="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin:$PATH"
