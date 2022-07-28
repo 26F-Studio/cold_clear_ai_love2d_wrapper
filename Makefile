@@ -1,6 +1,9 @@
 CC=gcc
 CFLAGS=-I./include -I./cold-clear/c-api -O2 -DNDEBUG
 LOVE_HOME=love
+NDK_PROJECT_PATH=.
+NDK_APPLICATION_MK=Application.mk
+APP_BUILD_SCRIPT=Android.mk
 
 # Android build
 android: build/armeabi-v7a/libCCloader.so build/arm64-v8a/libCCloader.so
@@ -18,7 +21,6 @@ build/arm64-v8a/libCCloader.so: build/arm64-v8a/libcold_clear.so
 
 build/armeabi-v7a/libcold_clear.so:
 	cd cold-clear && cargo ndk -t armeabi-v7a --platform 24 build -p c-api --release
-	ls -l cold-clear/target/
 	mkdir -p build/armeabi-v7a/ && cp cold-clear/target/armv7-linux-androideabi/release/libcold_clear.so build/armeabi-v7a/libcold_clear.so
 
 build/arm64-v8a/libcold_clear.so:
