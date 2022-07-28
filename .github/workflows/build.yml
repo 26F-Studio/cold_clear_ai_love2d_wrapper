@@ -25,19 +25,14 @@ jobs:
           rustup target add aarch64-linux-android armv7-linux-androideabi
       - name: Build CC loader
         run: |
-          export ANDROID_NDK_HOME=${ANDROID_NDK_LATEST_HOME}
-          export PATH="${ANDROID_NDK_HOME}:$PATH"
+          export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk
+          export PATH="${ANDROID_NDK_HOME}/21.4.7075529:${ANDROID_NDK_HOME}:$PATH"
           make android
       - name: Strip libs
         run: |
-          ls -l /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/aarch64-linux-android-4.9
-          ls -l /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/arm-linux-androideabi-4.9
-          ls -l /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/x86_64-4.9
-          ls -l /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/linux-x86_64
-          ls -l /usr/local/lib/android/sdk/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64
-          ls -l /usr/local/lib/android/sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/linux-x86_64
-          /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/strip build/armeabi-v7a/libcold_clear.so
-          /usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/strip build/arm64-v8a/libcold_clear.so
+          export PATH="/usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/:$PATH"
+          strip build/armeabi-v7a/libcold_clear.so
+          strip build/arm64-v8a/libcold_clear.so
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
