@@ -27,7 +27,8 @@ build/arm64-v8a/libcold_clear.so:
 
 # iOS build
 build/arm64/libCCloader.a: cold_clear_wrapper.c lib/arm64/libluajit.a build/arm64/libcold_clear.a
-	$(CC) $(CFLAGS) -target arm64-apple-ios -framework Security cold_clear_wrapper.c lib/arm64/libluajit.a build/arm64/libcold_clear.a -o build/arm64/libCCloader.a
+	$(CC) $(CFLAGS) -isysroot $(SYSROOT) -target arm64-apple-ios -static -framework Security -c cold_clear_wrapper.c lib/arm64/libluajit.a build/arm64/libcold_clear.a -o libCCloader.o
+	libtool -static -o build/arm64/libCCloader.a libCCloader.o
 
 build/arm64/libcold_clear.a:
 	cd cold-clear && cargo build -p c-api --release --target=aarch64-apple-ios
