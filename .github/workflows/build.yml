@@ -177,7 +177,6 @@ jobs:
       - name: Build CCloader
         shell: bash
         run: |
-          ls -l /c/Users/runneradmin/scoop/apps/tdm-gcc/current/bin/
           export PATH="/c/Users/runneradmin/scoop/apps/tdm-gcc/current/bin/:$PATH"
           echo $PATH
           make windows
