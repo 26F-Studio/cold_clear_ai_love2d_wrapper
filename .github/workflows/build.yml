@@ -27,11 +27,6 @@ jobs:
         run: |
           export PATH="${ANDROID_NDK_HOME}:$PATH"
           make android
-      - name: Strip libs
-        run: |
-          export android_strip=$(find ${ANDROID_NDK_HOME} -name 'strip' 2>/dev/null | head -n 1)
-          ${android_strip} build/armeabi-v7a/libCCloader.so
-          ${android_strip} build/arm64-v8a/libCCloader.so
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
