@@ -4,13 +4,13 @@ LOVE_HOME=love
 SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 
 # Android build
-android: build/armeabi-v7a/libCCloader.so build/arm64-v8a/libCCloader.so
-	echo "Targets built: build/armeabi-v7a/libCCloader.so build/arm64-v8a/libCCloader.so"
+android: build/armeabi-v7a/CCloader.so build/arm64-v8a/CCloader.so
+	echo "Targets built: build/armeabi-v7a/CCloader.so build/arm64-v8a/CCloader.so"
 
-build/%/libCCloader.so: build/%/libcold_clear.a
+build/%/CCloader.so: build/%/libcold_clear.a
 	cp $^ $(LOVE_HOME)/lib/$*/
 	ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=$(LOVE_HOME)/lib APP_ABI=$*
-	cp libs/$*/libCCloader.so $@
+	cp libs/$*/CCloader.so $@
 
 build/armeabi-v7a/libcold_clear.%:
 	cd cold-clear && cargo ndk -t armeabi-v7a --platform 24 build -p c-api --release
