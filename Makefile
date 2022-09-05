@@ -13,11 +13,11 @@ build/%/libCCloader.so: build/%/libcold_clear.a
 	cp libs/$*/libCCloader.so $@
 
 build/armeabi-v7a/libcold_clear.%:
-	cd cold-clear && cargo ndk -t $* --platform 24 build -p c-api --release
+	cd cold-clear && cargo ndk -t armeabi-v7a --platform 24 build -p c-api --release
 	mkdir -p $(@D) && cp cold-clear/target/armv7-linux-androideabi/release/$(@F) $@
 
 build/arm64-v8a/libcold_clear.%:
-	cd cold-clear && cargo ndk -t $* --platform 24 build -p c-api --release
+	cd cold-clear && cargo ndk -t arm64-v8a --platform 24 build -p c-api --release
 	mkdir -p $(@D) && cp cold-clear/target/aarch64-linux-android/release/$(@F) $@
 
 # iOS build
