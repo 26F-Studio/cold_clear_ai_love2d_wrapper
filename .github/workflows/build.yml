@@ -29,9 +29,9 @@ jobs:
           make android
       - name: Strip libs
         run: |
-          export PATH="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/:$PATH"
-          strip build/armeabi-v7a/libcold_clear.so
-          strip build/arm64-v8a/libcold_clear.so
+          export android_strip=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/strip
+          ${android_strip} build/armeabi-v7a/libCCloader.so
+          ${android_strip} build/arm64-v8a/libCCloader.so
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
