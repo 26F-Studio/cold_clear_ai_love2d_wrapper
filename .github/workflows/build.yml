@@ -29,7 +29,7 @@ jobs:
           make android
       - name: Strip libs
         run: |
-          export android_strip=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/strip
+          export android_strip=$(find ${ANDROID_NDK_HOME} -name 'strip' 2>/dev/null | head -n 1)
           ${android_strip} build/armeabi-v7a/libCCloader.so
           ${android_strip} build/arm64-v8a/libCCloader.so
       - name: Artifact
