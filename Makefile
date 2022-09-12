@@ -9,6 +9,7 @@ android: build/Android/armeabi-v7a/CCloader.so build/Android/arm64-v8a/CCloader.
 
 build/Android/%/CCloader.so:
 	ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=$(LOVE_HOME)/lib APP_ABI=$*
+	mkdir $(@D)
 	cp libs/$*/CCloader.so $@
 
 # iOS build

@@ -19,10 +19,6 @@ jobs:
         run: |
           curl -LO --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-android.apk
           7z x love-11.4-android.apk -o${{ env.LOVE_HOME }}
-      - name: Setup rust
-        run: |
-          cargo install cargo-ndk
-          rustup target add aarch64-linux-android armv7-linux-androideabi
       - name: Build CC loader
         run: |
           export PATH="${ANDROID_NDK_HOME}:$PATH"
