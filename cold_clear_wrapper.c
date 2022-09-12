@@ -55,7 +55,7 @@ static int reset_async(lua_State *L) {
     int lines = lua_tointeger(L, 6);
     int spawn = lua_tointeger(L, 7);
     bool field[400];
-    int size = luaL_getn(L, 2);
+    int size = lua_objlen(L, 2);
     int i;
     for (i = 0; i < 400; ++i) {
         field[i] = false;
