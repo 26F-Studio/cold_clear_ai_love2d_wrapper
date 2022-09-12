@@ -31,12 +31,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Android
-          path: build
+          path: build/Android
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip Android.zip ./build/*
+          7z a -tzip Android.zip ./build/Android/*
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
@@ -57,17 +57,17 @@ jobs:
       - name: Setup rust
         run: rustup target add aarch64-apple-ios
       - name: Build CC loader
-        run: make build/arm64/libCCloader.a
+        run: make build/iOS/arm64/libCCloader.a
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
           name: iOS
-          path: build
+          path: build/iOS
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip iOS.zip ./build/*
+          7z a -tzip iOS.zip ./build/iOS/*
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
@@ -88,20 +88,20 @@ jobs:
         run: rustup target add x86_64-unknown-linux-gnu
       - name: Build CC loader
         shell: bash
-        run: make build/x64/CCloader.so
+        run: make build/Linux/x64/CCloader.so
       - name: Strip libs
         shell: bash
-        run: strip build/x64/CCloader.so
+        run: strip build/Linux/x64/CCloader.so
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
           name: Linux
-          path: build
+          path: build/Linux
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip Linux.zip ./build/*
+          7z a -tzip Linux.zip ./build/Linux/*
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
@@ -126,17 +126,17 @@ jobs:
           aarch64-apple-darwin
       - name: Build CC loader
         shell: bash
-        run: make build/universal/CCloader.dylib
+        run: make build/macOS/universal/CCloader.dylib
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
           name: macOS
-          path: build
+          path: build/macOS
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip macOS.zip ./build/*
+          7z a -tzip macOS.zip ./build/macOS/*
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
@@ -178,12 +178,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Windows
-          path: build
+          path: build/Windows
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip Windows.zip ./build/*
+          7z a -tzip Windows.zip ./build/Windows/*
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
