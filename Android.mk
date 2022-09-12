@@ -18,6 +18,6 @@ $(LOCAL_PATH)/$(CCNAME).c:
 .PHONY: $(LOCAL_PATH)/$(CCNAME).c
 
 LOCAL_SRC_FILES := cold_clear_wrapper.c $(CCNAME).c
-LOCAL_LDFLAGS := lib$(CCNAME).a -L$(LOVE2D_LIB)/$(TARGET_ARCH_ABI) -llove -Wl,--hash-style=both
+LOCAL_LDFLAGS := lib$(CCNAME).a -llove -Wl,--hash-style=both
 LOCAL_C_INCLUDES := include cold-clear/c-api
 include $(BUILD_SHARED_LIBRARY)
