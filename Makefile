@@ -12,14 +12,6 @@ build/Android/%/CCloader.so: build/Android/%/libcold_clear.a
 	ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=$(LOVE_HOME)/lib APP_ABI=$*
 	cp libs/$*/CCloader.so $@
 
-build/Android/armeabi-v7a/libcold_clear.%:
-	cd cold-clear && cargo ndk -t armeabi-v7a --platform 24 build -p c-api --release
-	mkdir -p $(@D) && cp cold-clear/target/armv7-linux-androideabi/release/$(@F) $@
-
-build/Android/arm64-v8a/libcold_clear.%:
-	cd cold-clear && cargo ndk -t arm64-v8a --platform 24 build -p c-api --release
-	mkdir -p $(@D) && cp cold-clear/target/aarch64-linux-android/release/$(@F) $@
-
 # iOS build
 build/iOS/arm64/libCCloader.a: cold_clear_wrapper.c lib/arm64/libluajit.a build/iOS/arm64/libcold_clear.a
 	$(CC) $(CFLAGS) -isysroot $(SYSROOT) -target arm64-apple-ios -framework Security -c cold_clear_wrapper.c -o libCCloader.o
