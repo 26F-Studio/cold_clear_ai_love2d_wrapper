@@ -10,6 +10,7 @@ $(MY_COLDCLEAR_LOCAL_PATH)/$(CCNAME).c:
 	case $(TARGET_ARCH_ABI) in \
 		armeabi-v7a) rustup target add armv7-linux-androideabi;; \
 		arm64-v8a) rustup target add aarch64-linux-android;; \
+		x86_64) rustup target add x86_64-linux-android;; \
 		*) echo unsupported platform $(TARGET_ARCH_ABI); exit 1;; \
 	esac
 	cd $(@D)/cold-clear && cargo ndk -t $(TARGET_ARCH_ABI) --platform 24 build -p c-api --release
