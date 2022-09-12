@@ -1,5 +1,5 @@
-include $(CLEAR_VARS)
 MY_COLDCLEAR_LOCAL_PATH := $(call my-dir)
+include $(CLEAR_VARS)
 LOCAL_MODULE := CCloader
 LOCAL_MODULE_FILENAME := CCloader
 CCNAME := cold_clear-$(TARGET_ARCH_ABI)
