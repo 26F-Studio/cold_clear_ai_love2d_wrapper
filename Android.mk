@@ -4,7 +4,7 @@ LOCAL_MODULE := CCloader
 LOCAL_MODULE_FILENAME := CCloader
 CCNAME := cold_clear-$(TARGET_ARCH_ABI)
 
-$(LOCAL_PATH)/$(CCNAME).c
+$(LOCAL_PATH)/$(CCNAME).c:
 	cd cold-clear && cargo ndk -t $(TARGET_ARCH_ABI) --platform 24 build -p c-api --release
 	cp cold-clear/target/*/libcold_clear.a lib$(CCNAME).a
 	cd cold-clear && cargo clean
