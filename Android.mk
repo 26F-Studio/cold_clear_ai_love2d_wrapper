@@ -19,5 +19,5 @@ $(LOCAL_PATH)/$(CCNAME).c:
 
 LOCAL_SRC_FILES := cold_clear_wrapper.c $(CCNAME).c
 LOCAL_LDFLAGS := lib$(CCNAME).a -llove -Wl,--hash-style=both
-LOCAL_C_INCLUDES := include $(LOCAL_PATH)/cold-clear/c-api
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/include $(LOCAL_PATH)/cold-clear/c-api
 include $(BUILD_SHARED_LIBRARY)
