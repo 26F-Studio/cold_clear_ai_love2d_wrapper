@@ -11,13 +11,13 @@ $(LOCAL_PATH)/$(CCNAME).c:
 		arm64-v8a) rustup target add aarch64-linux-android;; \
 		*) exit 1;; \
 	esac
-	cd cold-clear && cargo ndk -t $(TARGET_ARCH_ABI) --platform 24 build -p c-api --release
-	cp cold-clear/target/*/release/libcold_clear.a lib$(CCNAME).a
-	cd cold-clear && cargo clean
+	cd $(LOCAL_PATH)/cold-clear && cargo ndk -t $(TARGET_ARCH_ABI) --platform 24 build -p c-api --release
+	cp $(LOCAL_PATH)/cold-clear/target/*/release/libcold_clear.a $(LOCAL_PATH)/lib$(CCNAME).a
+	cd $(LOCAL_PATH)/cold-clear && cargo clean
 	touch $@
 .PHONY: $(LOCAL_PATH)/$(CCNAME).c
 
 LOCAL_SRC_FILES := cold_clear_wrapper.c $(CCNAME).c
 LOCAL_LDFLAGS := lib$(CCNAME).a -llove -Wl,--hash-style=both
-LOCAL_C_INCLUDES := include cold-clear/c-api
+LOCAL_C_INCLUDES := include $(LOCAL_PATH)/cold-clear/c-api
 include $(BUILD_SHARED_LIBRARY)
