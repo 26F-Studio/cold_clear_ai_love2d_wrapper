@@ -5,8 +5,13 @@ LOCAL_MODULE_FILENAME := CCloader
 CCNAME := cold_clear-$(TARGET_ARCH_ABI)
 
 $(LOCAL_PATH)/$(CCNAME).c:
+	cargo install cargo-ndk
+	case $(TARGET_ARCH_ABI) in \
+		armeabi-v7a) rustup target add armv7-linux-androideabi;; \
+		arm64-v8a) rustup target add aarch64-linux-android;; \
+	esac
 	cd cold-clear && cargo ndk -t $(TARGET_ARCH_ABI) --platform 24 build -p c-api --release
-	cp cold-clear/target/*/libcold_clear.a lib$(CCNAME).a
+	cp cold-clear/target/*/release/libcold_clear.a lib$(CCNAME).a
 	cd cold-clear && cargo clean
 	touch $@
 .PHONY: $(LOCAL_PATH)/$(CCNAME).c
