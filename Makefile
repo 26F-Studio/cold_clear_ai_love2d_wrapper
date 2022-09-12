@@ -8,7 +8,6 @@ android: build/Android/armeabi-v7a/CCloader.so build/Android/arm64-v8a/CCloader.
 	echo "Targets built: build/Android/armeabi-v7a/CCloader.so build/Android/arm64-v8a/CCloader.so"
 
 build/Android/%/CCloader.so:
-	cp $^ $(LOVE_HOME)/lib/$*/
 	ndk-build NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk APP_BUILD_SCRIPT=Android.mk LOVE2D_LIB=$(LOVE_HOME)/lib APP_ABI=$*
 	cp libs/$*/CCloader.so $@
 
