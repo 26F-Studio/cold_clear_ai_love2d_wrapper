@@ -13,7 +13,7 @@ $(MY_COLDCLEAR_LOCAL_PATH)/$(CCNAME).c:
 		x86_64) rustup target add x86_64-linux-android;; \
 		*) echo unsupported platform $(TARGET_ARCH_ABI); exit 1;; \
 	esac
-	cd $(@D)/cold-clear && cargo ndk -t $(TARGET_ARCH_ABI) --platform `echo $(TARGET_PLATFORM) | sed s/android-//g` build -p c-api --release
+	cd $(@D)/cold-clear && ANDROID_NDK_HOME=$(ANDROID_NDK_ROOT) ANDROID_NDK_PATH=$(ANDROID_NDK_ROOT) NDK_HOME=$(ANDROID_NDK_ROOT) cargo ndk -t $(TARGET_ARCH_ABI) --platform `echo $(TARGET_PLATFORM) | sed s/android-//g` build -p c-api --release
 	cp $(@D)/cold-clear/target/*/release/libcold_clear.a $(@D)/lib$(CCNAME).a
 	cd $(@D)/cold-clear && cargo clean
 	touch $@
