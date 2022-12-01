@@ -19,30 +19,20 @@ jobs:
         run: |
           curl -LO --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-android.apk
           7z x love-11.4-android.apk -o${{ env.LOVE_HOME }}
-      - name: Setup rust
-        run: |
-          cargo install cargo-ndk
-          rustup target add aarch64-linux-android armv7-linux-androideabi
       - name: Build CC loader
         run: |
-          export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk
-          export PATH="${ANDROID_NDK_HOME}/21.4.7075529:${ANDROID_NDK_HOME}:$PATH"
+          export PATH="${ANDROID_NDK_HOME}:$PATH"
           make android
-      - name: Strip libs
-        run: |
-          export PATH="/usr/local/lib/android/sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/bin/:$PATH"
-          strip build/armeabi-v7a/libcold_clear.so
-          strip build/arm64-v8a/libcold_clear.so
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
           name: Android
-          path: build
+          path: build/Android
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip Android.zip ./build/*
+          7z a -tzip Android.zip ./build/Android/*
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
@@ -63,17 +53,17 @@ jobs:
       - name: Setup rust
         run: rustup target add aarch64-apple-ios
       - name: Build CC loader
-        run: make build/arm64/libCCloader.a
+        run: make build/iOS/arm64/libCCloader.a
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
           name: iOS
-          path: build
+          path: build/iOS
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip iOS.zip ./build/*
+          7z a -tzip iOS.zip ./build/iOS/*
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
@@ -86,28 +76,28 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - name: Install love-11.4
+      - name: Install lua-5.1
         shell: bash
-        run: sudo apt install love
+        run: sudo apt install liblua5.1-0-dev
       - name: Setup rust targets
         shell: bash
         run: rustup target add x86_64-unknown-linux-gnu
       - name: Build CC loader
         shell: bash
-        run: make build/x64/CCloader.so
+        run: make build/Linux/x64/CCloader.so
       - name: Strip libs
         shell: bash
-        run: strip build/x64/CCloader.so
+        run: strip build/Linux/x64/CCloader.so
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
           name: Linux
-          path: build
+          path: build/Linux
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip Linux.zip ./build/*
+          7z a -tzip Linux.zip ./build/Linux/*
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
@@ -132,17 +122,17 @@ jobs:
           aarch64-apple-darwin
       - name: Build CC loader
         shell: bash
-        run: make build/universal/CCloader.dylib
+        run: make build/macOS/universal/CCloader.dylib
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
           name: macOS
-          path: build
+          path: build/macOS
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip macOS.zip ./build/*
+          7z a -tzip macOS.zip ./build/macOS/*
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
@@ -184,12 +174,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Windows
-          path: build
+          path: build/Windows
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip Windows.zip ./build/*
+          7z a -tzip Windows.zip ./build/Windows/*
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
