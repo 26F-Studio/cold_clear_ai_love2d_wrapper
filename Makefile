@@ -36,7 +36,7 @@ build/arm64/libcold_clear.a:
 
 # Linux build
 build/x64/CCloader.so: cold_clear_wrapper.c /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 build/x64/libcold_clear.so
-	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c build/x64/libcold_clear.so /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 -o build/x64/CCloader.so
+	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c /usr/lib/x86_64-linux-gnu/libluajit-5.1.so.2 -Lbuild/x64 -lcold_clear -o build/x64/CCloader.so
 
 build/x64/libcold_clear.so:
 	cd cold-clear && cargo build -p c-api --release --target=x86_64-unknown-linux-gnu
