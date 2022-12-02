@@ -21,6 +21,7 @@ build/iOS/arm64/libcold_clear.a:
 	cd cold-clear && cargo build -p c-api --release --target=aarch64-apple-ios
 	mkdir -p build/iOS/arm64/ && cp cold-clear/target/aarch64-apple-ios/release/libcold_clear.a build/iOS/arm64/libcold_clear.a
 
+# Linux build
 build/Linux/x64/CCloader.so: cold_clear_wrapper.c build/Linux/x64/libcold_clear.a
 	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c -Lbuild/Linux/x64 -lcold_clear -llua5.1 -o $@
 	rm build/Linux/x64/libcold_clear.a
