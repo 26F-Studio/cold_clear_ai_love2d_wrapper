@@ -23,7 +23,7 @@ build/iOS/arm64/libcold_clear.a:
 
 # Linux build
 build/Linux/x64/CCloader.so: cold_clear_wrapper.c build/Linux/x64/libcold_clear.a
-	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c -Lbuild/Linux/x64 -lcold_clear -llua5.1 -o $@
+	$(CC) $(CFLAGS) -shared cold_clear_wrapper.c -Lbuild/Linux/x64 -lcold_clear -lluajit-5.1 -o $@
 	rm build/Linux/x64/libcold_clear.a
 
 build/Linux/x64/libcold_clear.%:
