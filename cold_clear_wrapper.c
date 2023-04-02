@@ -15,7 +15,9 @@ static void *check_userdata(lua_State *L, int index, const char *tname) {
     return ud;
 }
 #define lua_tointeger luaL_checkinteger
+#ifndef lua_tostring
 #define lua_tostring luaL_checkstring
+#endif
 #define lua_tonumber luaL_checknumber
 #else  /* DEBUG_CC */
 static void *check_userdata(lua_State *L, int index, const char *tname) {
@@ -353,7 +355,7 @@ static const struct luaL_Reg weightsList[] = {
     {"fastWeights", fast_weights},
     {0, 0}};
 
-int luaopen_CCloader(lua_State *L) {
+__declspec(dllexport) int luaopen_CCloader(lua_State *L) {
     luaL_newmetatable(L, "CCOptions");
     lua_pushstring(L, "__index");  // see comments below
     lua_pushvalue(L, -2);
