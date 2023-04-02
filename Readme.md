@@ -1,11 +1,12 @@
 # Cold Clear AI wrapper for Love2D - with Lê Duy Quang's patch
+### FOR INTERNAL USE ONLY<BR>Do not make any PR from this fork to the upstream repo. 
 
 [![CI](https://github.com/26F-Studio/cold_clear_ai_love2d_wrapper/actions/workflows/build.yml/badge.svg)](https://github.com/26F-Studio/cold_clear_ai_love2d_wrapper/actions)
 ![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20android%20%7C%20macos%20%7C%20ios-brightgreen.svg)
 
-This is a love2d/lua wrapper for [Cold Clear](https://github.com/MinusKelvin/cold-clear), in order use it in Tetris games made with [Love2d game engine](https://love2d.org/).
+This is a Love2D/Lua wrapper for [Cold Clear](https://github.com/MinusKelvin/cold-clear), in order use it in Tetris games made with [Love2D game engine](https://love2d.org/).
 # Special thanks to Lê Duy Quang who made the patch for Windows to fix errors while importing library from child folder, also combine CCloader and Cold Clear into one DLL file now
-##### Sadly I don't have any knowledge of C
+> Sadly I don't have any knowledge of C
 But this repo will be included in (\<I will put the link later\>)
 
 ## Pitfalls
