@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: get-info
     env:
-      LOVE_PACKAGE_PATH: love.apk
+      LOVE_PACKAGE_PATH: ./love.apk
       OUTPUT_FOLDER: ./build/Android
       RELEASE_FOLDER: ./release
     steps:
@@ -206,8 +206,8 @@ jobs:
     runs-on: windows-latest
     needs: get-info
     env:
-      LOVE_32BIT_PACKAGE_PATH: love-x86.zip
-      LOVE_64BIT_PACKAGE_PATH: love-x64.zip
+      LOVE_32BIT_PACKAGE_PATH: ./love-x86.zip
+      LOVE_64BIT_PACKAGE_PATH: ./love-x64.zip
       OUTPUT_FOLDER: ./build/Windows
       RELEASE_FOLDER: ./release
     steps:
