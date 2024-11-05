@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       commit-hash: ${{ steps.git-info.outputs.commit-hash }}
-      commit-message: ${{ steps.git-info.outputs.commit-message }}
     steps:
       - uses: actions/checkout@v4
       - name: Get git info
@@ -20,8 +19,6 @@ jobs:
         run: |
           COMMIT_HASH=$(git rev-parse --short ${{ GITHUB.SHA }})
           echo "commit-hash=$COMMIT_HASH" >> $GITHUB_OUTPUT
-          COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ GITHUB.SHA }})
-          echo "commit-message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
   build-android:
     runs-on: ubuntu-latest
@@ -64,7 +61,6 @@ jobs:
         with:
           allowUpdates: true
           artifacts: ${{ env.RELEASE_FOLDER }}/Android.zip
-          body: ${{ needs.get-info.outputs.commit-message }}
 
   build-iOS:
     runs-on: macos-latest
@@ -110,7 +106,6 @@ jobs:
         with:
           allowUpdates: true
           artifacts: ${{ env.RELEASE_FOLDER }}/iOS.zip
-          body: ${{ needs.get-info.outputs.commit-message }}
 
   build-linux:
     runs-on: ubuntu-latest
@@ -161,7 +156,6 @@ jobs:
         with:
           allowUpdates: true
           artifacts: ${{ env.RELEASE_FOLDER }}/Linux.zip
-          body: ${{ needs.get-info.outputs.commit-message }}
 
   build-macOS:
     runs-on: macos-latest
@@ -207,7 +201,6 @@ jobs:
         with:
           allowUpdates: true
           artifacts: ${{ env.RELEASE_FOLDER }}/macOS.zip
-          body: ${{ needs.get-info.outputs.commit-message }}
 
   build-windows:
     runs-on: windows-latest
@@ -271,5 +264,4 @@ jobs:
         with:
           allowUpdates: true
           artifacts: ${{ env.RELEASE_FOLDER }}/Windows.zip
-          body: ${{ needs.get-info.outputs.commit-message }}
 
