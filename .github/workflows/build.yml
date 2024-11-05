@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: get-info
     env:
-      LOVE_PACKAGE_PATH: ./love.apk
+      LOVE_PACKAGE_PATH: ./love.zip
       OUTPUT_FOLDER: ./build/Android
       RELEASE_FOLDER: ./release
     steps:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Download love
         run: |
-          curl --retry 5 https://github.com/love2d/love-android/releases/download/11.4/love-11.4-android-embed.apk -o ${{ env.LOVE_PACKAGE_PATH }}
+          curl -L --retry 5 https://github.com/love2d/love-android/releases/download/11.4/love-11.4-android-embed.apk -o ${{ env.LOVE_PACKAGE_PATH }}
           7z x ${{ env.LOVE_PACKAGE_PATH }} -olove
 
       - name: Build CC loader
@@ -77,7 +77,7 @@ jobs:
       - name: Get Luajit
         shell: bash
         run: |
-          curl --retry 5 https://raw.githubusercontent.com/love2d/love-apple-dependencies/refs/tags/11.4/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a -o ${{ env.LUAJIT_LIB_PATH }}
+          curl -L --retry 5 https://raw.githubusercontent.com/love2d/love-apple-dependencies/refs/tags/11.4/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a -o ${{ env.LUAJIT_LIB_PATH }}
           mkdir -p ./lib/arm64/
           mv ${{ env.LUAJIT_LIB_PATH }} ./lib/arm64/
 
@@ -127,7 +127,7 @@ jobs:
 
       - name: Setup rust
         run: |
-          docker exec -i ubuntu bash -c "curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf > ~/rustup.sh"
+          docker exec -i ubuntu bash -c "curl -L --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf > ~/rustup.sh"
           docker exec -i ubuntu bash -c "sh ~/rustup.sh -y"
           docker exec -i ubuntu /root/.cargo/bin/rustup target add x86_64-unknown-linux-gnu
 
@@ -172,7 +172,7 @@ jobs:
       - name: Get Luajit
         shell: bash
         run: |
-          curl --retry 5 https://github.com/love2d/love-apple-dependencies/raw/refs/tags/11.4/macOS/Frameworks/Lua.framework/Versions/A/Lua -o ${{ env.LUAJIT_LIB_PATH }}
+          curl -L --retry 5 https://github.com/love2d/love-apple-dependencies/raw/refs/tags/11.4/macOS/Frameworks/Lua.framework/Versions/A/Lua -o ${{ env.LUAJIT_LIB_PATH }}
           mkdir -p ./lib/universal/
           mv ${{ env.LUAJIT_LIB_PATH }} ./lib/universal/
 
@@ -227,10 +227,10 @@ jobs:
       - name: Download love
         shell: bash
         run: |
-          curl --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip -o ${{ env.LOVE_32BIT_PACKAGE_PATH }}
+          curl -L --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip -o ${{ env.LOVE_32BIT_PACKAGE_PATH }}
           mkdir -p lib/x86/
           7z e ${{ env.LOVE_32BIT_PACKAGE_PATH }} lua51.dll -r -olib/x86/
-          curl --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip -o ${{ env.LOVE_64BIT_PACKAGE_PATH }}
+          curl -L --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip -o ${{ env.LOVE_64BIT_PACKAGE_PATH }}
           mkdir -p lib/x64/
           7z e ${{ env.LOVE_64BIT_PACKAGE_PATH }} lua51.dll -r -olib/x64/
 
