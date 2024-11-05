@@ -5,6 +5,12 @@
 
 This is a love2d/lua wrapper for [cold clear](https://github.com/MinusKelvin/cold-clear), in order use it in tetris games made by [love2d game engine](https://love2d.org/).
 
+## Notice
+
+### This branch is for the `11.4` version of the [LÖVE](https://love2d.org/) framework.
+
+### For the latest release version, please refer to the [**main**](https://github.com/love-actions/love-actions-android) branch.
+
 ## Pitfalls
 
 ### Piece id
