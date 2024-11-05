@@ -7,191 +7,269 @@ on:
       - '*'
 
 jobs:
+  get-info:
+    runs-on: ubuntu-latest
+    outputs:
+      commit-hash: ${{ steps.git-info.outputs.commit-hash }}
+      commit-message: ${{ steps.git-info.outputs.commit-message }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get git info
+        id: git-info
+        shell: bash
+        run: |
+          COMMIT_HASH=$(git rev-parse --short ${{ GITHUB.SHA }})
+          echo "commit-hash=$COMMIT_HASH" >> $GITHUB_OUTPUT
+          COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ GITHUB.SHA }})
+          echo "commit-message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+
   build-android:
     runs-on: ubuntu-latest
+    needs: get-info
     env:
-      LOVE_HOME: love
+      LOVE_PACKAGE_PATH: love.apk
+      OUTPUT_FOLDER: ./build/Android
+      RELEASE_FOLDER: ./release
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: true
+
       - name: Download love
         run: |
-          curl -LO --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-android.apk
-          7z x love-11.4-android.apk -o${{ env.LOVE_HOME }}
+          curl --retry 5 https://github.com/love2d/love-android/releases/download/11.4/love-11.4-android-embed.apk -o ${{ env.LOVE_PACKAGE_PATH }}
+          7z x ${{ env.LOVE_PACKAGE_PATH }} -olove
+
       - name: Build CC loader
         run: |
           export PATH="${ANDROID_NDK_HOME}:$PATH"
           make android
-      - name: Artifact
-        uses: actions/upload-artifact@v3
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: Android
-          path: build/Android
-      - name: Pack build folder
+          name: Android_${{ needs.get-info.outputs.commit-hash }}_#${{ GITHUB.RUN_NUMBER }}
+          path: ${{ env.OUTPUT_FOLDER }}
+
+      - name: Prepare for release
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip Android.zip ./build/Android/*
-      - name: Create release
+          mkdir -p ${{ env.RELEASE_FOLDER }}
+          7z a -tzip ${{ env.RELEASE_FOLDER }}/Android.zip ${{ env.OUTPUT_FOLDER }}/*
+
+      - name: Upload release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          files: Android.zip
+          allowUpdates: true
+          artifacts: ${{ env.RELEASE_FOLDER }}/Android.zip
+          body: ${{ needs.get-info.outputs.commit-message }}
 
   build-iOS:
     runs-on: macos-latest
+    needs: get-info
+    env:
+      LUAJIT_LIB_PATH: libluajit.a
+      OUTPUT_FOLDER: ./build/iOS
+      RELEASE_FOLDER: ./release
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
+
       - name: Get Luajit
         shell: bash
         run: |
-          curl -LO --retry 5 https://github.com/love2d/love-apple-dependencies/raw/main/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a
-          mkdir -p lib/arm64/ && mv libluajit_device.a lib/arm64/libluajit.a
+          curl --retry 5 https://raw.githubusercontent.com/love2d/love-apple-dependencies/refs/tags/11.4/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a -o ${{ env.LUAJIT_LIB_PATH }}
+          mkdir -p ./lib/arm64/
+          mv ${{ env.LUAJIT_LIB_PATH }} ./lib/arm64/
+
       - name: Setup rust
         run: rustup target add aarch64-apple-ios
+
       - name: Build CC loader
-        run: make build/iOS/arm64/libCCloader.a
-      - name: Artifact
-        uses: actions/upload-artifact@v3
+        run: make ${{ env.OUTPUT_FOLDER }}/arm64/libCCloader.a
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: iOS
-          path: build/iOS
-      - name: Pack build folder
+          name: iOS_${{ needs.get-info.outputs.commit-hash }}_#${{ GITHUB.RUN_NUMBER }}
+          path: ${{ env.OUTPUT_FOLDER }}
+
+      - name: Prepare for release
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip iOS.zip ./build/iOS/*
+          mkdir -p ${{ env.RELEASE_FOLDER }}
+          7z a -tzip ${{ env.RELEASE_FOLDER }}/iOS.zip ${{ env.OUTPUT_FOLDER }}*
+
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          files: iOS.zip
+          allowUpdates: true
+          artifacts: ${{ env.RELEASE_FOLDER }}/iOS.zip
+          body: ${{ needs.get-info.outputs.commit-message }}
 
   build-linux:
     runs-on: ubuntu-latest
+    needs: get-info
+    env:
+      OUTPUT_FOLDER: ./build/Linux
+      RELEASE_FOLDER: ./release
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
-      - name: Start docker
-        shell: bash
-        run: docker run -id -v $(pwd):/work --name ubuntu ubuntu:18.04 /bin/bash
-      - name: Install Dependencies
+
+      - name: Setup docker
         shell: bash
         run: |
+          docker run -id -v $(pwd):/work --name ubuntu ubuntu:18.04 /bin/bash
           docker exec -i ubuntu apt-get update -y
           docker exec -i ubuntu apt-get install libluajit-5.1-dev curl build-essential -y
+
+      - name: Setup rust
+        run: |
           docker exec -i ubuntu bash -c "curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf > ~/rustup.sh"
           docker exec -i ubuntu bash -c "sh ~/rustup.sh -y"
-      - name: Setup rust targets
-        shell: bash
-        run: |
           docker exec -i ubuntu /root/.cargo/bin/rustup target add x86_64-unknown-linux-gnu
+
       - name: Build CC loader
         shell: bash
         run: |
-          docker exec -i ubuntu bash -c "source \$HOME/.cargo/env && cd /work && make build/Linux/x64/CCloader.so"
-      - name: Strip libs
-        shell: bash
-        run: |
-          docker exec -i ubuntu bash -c "cd /work && strip build/Linux/x64/CCloader.so"
-      - name: Artifact
-        uses: actions/upload-artifact@v3
+          docker exec -i ubuntu bash -c "source \$HOME/.cargo/env && cd /work && make ${{ env.OUTPUT_FOLDER }}/x64/CCloader.so"
+          docker exec -i ubuntu bash -c "cd /work && strip ${{ env.OUTPUT_FOLDER }}/x64/CCloader.so"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: Linux
-          path: build/Linux
-      - name: Pack build folder
+          name: Linux_${{ needs.get-info.outputs.commit-hash }}_#${{ GITHUB.RUN_NUMBER }}
+          path: ${{ env.OUTPUT_FOLDER }}
+
+      - name: Prepare for release
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip Linux.zip ./build/Linux/*
+          mkdir -p ${{ env.RELEASE_FOLDER }}
+          7z a -tzip ${{ env.RELEASE_FOLDER }}/Linux.zip ${{ env.OUTPUT_FOLDER }}/*
+
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          files: Linux.zip
+          allowUpdates: true
+          artifacts: ${{ env.RELEASE_FOLDER }}/Linux.zip
+          body: ${{ needs.get-info.outputs.commit-message }}
 
   build-macOS:
     runs-on: macos-latest
+    needs: get-info
+    env:
+      LUAJIT_LIB_PATH: libluajit.a
+      OUTPUT_FOLDER: ./build/macOS
+      RELEASE_FOLDER: ./release
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
+
       - name: Get Luajit
         shell: bash
         run: |
-          curl -LO --retry 5 https://github.com/love2d/love-apple-dependencies/raw/main/macOS/Frameworks/Lua.framework/Versions/A/Lua
-          mkdir -p lib/universal/ && mv Lua lib/universal/libluajit.a
+          curl --retry 5 https://github.com/love2d/love-apple-dependencies/raw/refs/tags/11.4/macOS/Frameworks/Lua.framework/Versions/A/Lua -o ${{ env.LUAJIT_LIB_PATH }}
+          mkdir -p ./lib/universal/
+          mv ${{ env.LUAJIT_LIB_PATH }} ./lib/universal/
+
       - name: Setup rust
-        run: |
-          rustup target add \
-          x86_64-apple-darwin \
-          aarch64-apple-darwin
+        run: rustup target add x86_64-apple-darwin aarch64-apple-darwin
+
       - name: Build CC loader
-        shell: bash
-        run: make build/macOS/universal/CCloader.dylib
-      - name: Artifact
-        uses: actions/upload-artifact@v3
+        run: make ${{ env.OUTPUT_FOLDER }}/universal/CCloader.dylib
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: macOS
-          path: build/macOS
+          name: macOS_${{ needs.get-info.outputs.commit-hash }}_#${{ GITHUB.RUN_NUMBER }}
+          path: ${{ env.OUTPUT_FOLDER }}
+
       - name: Pack build folder
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip macOS.zip ./build/macOS/*
+          mkdir -p ${{ env.RELEASE_FOLDER }}
+          7z a -tzip ${{ env.RELEASE_FOLDER }}/macOS.zip ${{ env.OUTPUT_FOLDER }}/*
+
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          files: macOS.zip
+          allowUpdates: true
+          artifacts: ${{ env.RELEASE_FOLDER }}/macOS.zip
+          body: ${{ needs.get-info.outputs.commit-message }}
 
   build-windows:
     runs-on: windows-latest
+    needs: get-info
+    env:
+      LOVE_32BIT_PACKAGE_PATH: love-x86.zip
+      LOVE_64BIT_PACKAGE_PATH: love-x64.zip
+      OUTPUT_FOLDER: ./build/Windows
+      RELEASE_FOLDER: ./release
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
-      - uses: MinoruSekine/setup-scoop@main
-      - name: Install packages
+
+      - name: Install scoop
+        uses: MinoruSekine/setup-scoop@main
+
+      - name: Install dependencies
         shell: bash
         run: |
           scoop bucket add versions
           scoop install make tdm-gcc
+
       - name: Download love
         shell: bash
         run: |
-          curl -LO --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip
-          mkdir -p lib/x64/ && 7z e love-11.4-win64.zip lua51.dll -r -olib/x64/
-          curl -LO --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip
-          mkdir -p lib/x86/ && 7z e love-11.4-win32.zip lua51.dll -r -olib/x86/
+          curl --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip -o ${{ env.LOVE_32BIT_PACKAGE_PATH }}
+          mkdir -p lib/x86/
+          7z e ${{ env.LOVE_32BIT_PACKAGE_PATH }} lua51.dll -r -olib/x86/
+          curl --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip -o ${{ env.LOVE_64BIT_PACKAGE_PATH }}
+          mkdir -p lib/x64/
+          7z e ${{ env.LOVE_64BIT_PACKAGE_PATH }} lua51.dll -r -olib/x64/
+
       - name: Setup rust targets
         shell: bash
-        run: |
-          rustup target add \
-          x86_64-pc-windows-msvc \
-          i686-pc-windows-msvc
+        run: rustup target add x86_64-pc-windows-msvc i686-pc-windows-msvc
+
       - name: Build CCloader
         shell: bash
         run: |
           export PATH="/c/Users/runneradmin/scoop/apps/tdm-gcc/current/bin/:$PATH"
           echo $PATH
           make windows
-      - name: Artifact
-        uses: actions/upload-artifact@v3
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: Windows
-          path: build/Windows
-      - name: Pack build folder
+          name: Windows_${{ needs.get-info.outputs.commit-hash }}_#${{ GITHUB.RUN_NUMBER }}
+          path: ${{ env.OUTPUT_FOLDER }}
+
+      - name: Prepare for release
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
-          7z a -tzip Windows.zip ./build/Windows/*
+          mkdir -p ${{ env.RELEASE_FOLDER }}
+          7z a -tzip ${{ env.RELEASE_FOLDER }}/Windows.zip ${{ env.OUTPUT_FOLDER }}/*
+
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          files: Windows.zip
+          allowUpdates: true
+          artifacts: ${{ env.RELEASE_FOLDER }}/Windows.zip
+          body: ${{ needs.get-info.outputs.commit-message }}
+
