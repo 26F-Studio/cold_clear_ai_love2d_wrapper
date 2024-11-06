@@ -34,7 +34,7 @@ jobs:
 
       - name: Download love
         run: |
-          curl -L --retry 5 https://github.com/love2d/love-android/releases/download/11.4/love-11.4-android-embed.apk -o ${{ env.LOVE_PACKAGE_PATH }}
+          curl -L --retry 5 https://github.com/love2d/love-android/releases/download/11.5a/love-11.5-android-embed.apk -o ${{ env.LOVE_PACKAGE_PATH }}
           7z x ${{ env.LOVE_PACKAGE_PATH }} -olove
 
       - name: Build CC loader
@@ -77,7 +77,7 @@ jobs:
       - name: Get Luajit
         shell: bash
         run: |
-          curl -L --retry 5 https://raw.githubusercontent.com/love2d/love-apple-dependencies/refs/tags/11.4/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a -o ${{ env.LUAJIT_LIB_PATH }}
+          curl -L --retry 5 https://raw.githubusercontent.com/love2d/love-apple-dependencies/refs/tags/11.5/iOS/libraries/Lua.xcframework/ios-arm64/libluajit_device.a -o ${{ env.LUAJIT_LIB_PATH }}
           mkdir -p ./lib/arm64/
           mv ${{ env.LUAJIT_LIB_PATH }} ./lib/arm64/
 
@@ -172,7 +172,7 @@ jobs:
       - name: Get Luajit
         shell: bash
         run: |
-          curl -L --retry 5 https://github.com/love2d/love-apple-dependencies/raw/refs/tags/11.4/macOS/Frameworks/Lua.framework/Versions/A/Lua -o ${{ env.LUAJIT_LIB_PATH }}
+          curl -L --retry 5 https://github.com/love2d/love-apple-dependencies/raw/refs/tags/11.5/macOS/Frameworks/Lua.framework/Versions/A/Lua -o ${{ env.LUAJIT_LIB_PATH }}
           mkdir -p ./lib/universal/
           mv ${{ env.LUAJIT_LIB_PATH }} ./lib/universal/
 
@@ -227,10 +227,10 @@ jobs:
       - name: Download love
         shell: bash
         run: |
-          curl -L --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-win32.zip -o ${{ env.LOVE_32BIT_PACKAGE_PATH }}
+          curl -L --retry 5 https://github.com/love2d/love/releases/download/11.5/love-11.5-win32.zip -o ${{ env.LOVE_32BIT_PACKAGE_PATH }}
           mkdir -p lib/x86/
           7z e ${{ env.LOVE_32BIT_PACKAGE_PATH }} lua51.dll -r -olib/x86/
-          curl -L --retry 5 https://github.com/love2d/love/releases/download/11.4/love-11.4-win64.zip -o ${{ env.LOVE_64BIT_PACKAGE_PATH }}
+          curl -L --retry 5 https://github.com/love2d/love/releases/download/11.5/love-11.5-win64.zip -o ${{ env.LOVE_64BIT_PACKAGE_PATH }}
           mkdir -p lib/x64/
           7z e ${{ env.LOVE_64BIT_PACKAGE_PATH }} lua51.dll -r -olib/x64/
 
